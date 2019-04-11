@@ -2,11 +2,14 @@
 import "../src/bootstrap";
 // --- Post bootstrap ---
 import React, { Fragment } from "react";
+import ButtonComponent from "../components/Low/Button";
 
 function Index() {
   return (
     <Fragment>
       <div>Base project</div>
+      <ButtonComponent type={"text"} label={"transparent"} />
+      <ButtonComponent type={"textAccented"} label={"transparent"} />
     </Fragment>
   );
 }
