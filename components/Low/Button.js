@@ -132,7 +132,6 @@ const useStyles = makeStyles(theme => ({
 
 /** Componente "Button". Permite mostrar un loader y tiene estilos para los estados "success" y "failed", entre
  * todas las diferentes configuraciones nativas de Material-UI/Button.
- *
  * @param {string} label Texto que se muestra en el botón.
  * @param {function} onClick Evento que ejecutará el botón al hacer click.
  * @param {boolean} loading Si es true, carga un progress y deshabilita el botón, de lo contrario muestra texto.
@@ -230,14 +229,12 @@ function ButtonComponent(props) {
     <Fragment>
       {/* según que variante se setee, muestra un button o un fab */}
       {props.variant == "round" || props.variant == "extended" ? fab : button}
-      {/* Si loading=true muestra un progress */}
     </Fragment>
   );
 }
 
 /* Props obligatorios para el componente botón */
 ButtonComponent.propTypes = {
-  // label: PropTypes.string,
   onClick: PropTypes.func.isRequired
 };
 
