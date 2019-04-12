@@ -18,6 +18,10 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
+/**
+ * Realiza la acción click
+ * @param {function} handleDrawerClose 
+ */
 const handleClick = handleDrawerClose => {
   handleDrawerClose();
 };
