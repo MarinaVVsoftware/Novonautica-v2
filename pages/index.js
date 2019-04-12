@@ -2,11 +2,13 @@
 import "../src/bootstrap";
 // --- Post bootstrap ---
 import React, { Fragment } from "react";
+import '../src/global.css';
+import DashBoardComponent from '../components/Views/DashBoard';
 
 function Index() {
   return (
     <Fragment>
-      <div>Base project</div>
+      <DashBoardComponent />
     </Fragment>
   );
 }

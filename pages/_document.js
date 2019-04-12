@@ -16,6 +16,12 @@ class MyDocument extends Document {
           />
         </Head>
         <body>
+        <style jsx global>{`
+          body { 
+            background: #303030 !important;
+            color: #E6E6E6 !important;
+          }
+        `}</style>
           <Main />
           <NextScript />
         </body>
