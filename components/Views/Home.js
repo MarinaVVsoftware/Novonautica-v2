@@ -3,20 +3,16 @@ import { makeStyles } from "@material-ui/styles";
 
 const useStyles = makeStyles(theme => ({
   size: {
-    height: '80vh',
-    position: 'relative',
-    overflow: 'hidden'
+    width: '12rem',
+    [theme.breakpoints.up('lg')]: {
+      width: '48rem',
+    },
+    position: 'absolute',
+    bottom: '0px',
+    right: '0px'
   },
   imageSize: {
-    maxWidth: '100%',
-    width: '100vh',
-    position: 'absolute',
-    bottom: '-10px',
-    right: '-40px',
-    [theme.breakpoints.up('sm')]: {
-      bottom: '-75px',
-      right: '-100px',
-    },
+    width: '100%',
   }
 }));
 
@@ -24,7 +20,7 @@ export default function Home() {
   const classes = useStyles();
   return (
     <div className={classes.size}>
-        <img className={classes.imageSize} src={require('../../static/marinavv-isotipo.svg')} />
+      <img className={classes.imageSize} src={require('../../static/marinavv-isotipo.svg')} />
     </div>
   );
 }
