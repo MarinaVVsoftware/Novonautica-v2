@@ -44,37 +44,48 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
+/**
+ * @param {string} name Recupera el nombre para el appbar.
+ * @param {bool} open Recupera un bool para abrir o cerrar el drawer.
+ * @param {func} handleDrawerOpen Recupera una función para abrir el drawer.
+ */
 function AppBarComponent(props) {
-  const classes = useStyles();
-  return (
-    <AppBar
-      className={classNames(classes.appBar, classes.appBarBackground, {
-        [classes.appBarShift]: props.open
-      })}
-      position="fixed"
-    >
-      <ToolBar disableGutters={!props.open}>
-        <IconButton
-          color="inherit"
-          aria-label="Open drawer"
-          onClick={props.handleDrawerOpen}
-          className={classNames(classes.menuButton, {
-            [classes.hide]: props.open
-          })}
+    const classes = useStyles();
+    return (
+        <AppBar
+            className={classNames(classes.appBar, classes.appBarBackground, {
+                [classes.appBarShift]: props.open
+            })}
+            position="fixed"
         >
-          <MenuIcon />
-        </IconButton>
-        <Typography
-          variant="h6"
-          className={classes.grow}
-          color="inherit"
-          noWrap
-        >
-          News
-        </Typography>
-      </ToolBar>
-    </AppBar>
-  );
+            <ToolBar disableGutters={!props.open}>
+                <IconButton
+                    color="inherit"
+                    aria-label="Open drawer"
+                    onClick={props.handleDrawerOpen}
+                    className={classNames(classes.menuButton, {
+                        [classes.hide]: props.open
+                    })}
+                >
+                    <MenuIcon />
+                </IconButton>
+                <Typography
+                    variant="h6"
+                    className={classes.grow}
+                    color="inherit"
+                    noWrap
+                >
+                    { props.name }
+                </Typography>
+            </ToolBar>
+        </AppBar>
+    );
 }
+
+AppBarComponent.Proptypes = {
+  name: PropTypes.string.isRequired,
+  open: PropTypes.bool.isRequired,
+  handleDrawerOpen: PropTypes.func.isRequired
+};
 
 export default AppBarComponent;

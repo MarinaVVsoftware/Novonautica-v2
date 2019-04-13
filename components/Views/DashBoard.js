@@ -3,7 +3,7 @@ import CssBaseline from "@material-ui/core/CssBaseline";
 import AppBarComponent from "../High/dashboard/AppBar";
 import DrawerComponent from "../High/dashboard/Drawer";
 import { makeStyles } from "@material-ui/styles";
-import ModuleHandler from "../High/dashboard/ModuleHandler";
+import componentsList from "../Handlers/ModuleHandler";
 import PropTypes from 'prop-types';
 
 const useStyles = makeStyles(theme => ({
@@ -19,12 +19,13 @@ const useStyles = makeStyles(theme => ({
 
 /**
  * Función principal que se llama desde Pages.
- * @param {Object} props 
+ * @param {string} name Recupera el nombre para el navbar.
+ * @param {object} menu Recupera el objeto del menú.
  */
 function DashBoardComponent(props) {
   const classes = useStyles();
   const [open, setOpen] = React.useState(false);
-  const [module, setModule] = React.useState("dashboard");
+  const [module, setModule] = React.useState("Home");
 
   /** Acción que abre el drawer */
   function handleDrawerOpen() {
@@ -36,18 +37,29 @@ function DashBoardComponent(props) {
     setOpen(false);
   }
 
+  /** Acción que detecta que modulo cambiar */
+  function handleModuleChange(moduleName) {
+    moduleName ? setModule(moduleName) : setModule("Home");
+  }
+
   return (
     <div className={classes.root}>
         <CssBaseline />
-        <AppBarComponent open={open} handleDrawerOpen={handleDrawerOpen} />
-        <DrawerComponent open={open} handleDrawerClose={handleDrawerClose} />
+        <AppBarComponent 
+            name={props.name} 
+            open={open} 
+            handleDrawerOpen={handleDrawerOpen}
+        />
+        <DrawerComponent
+            menu={props.menu}
+            open={open} 
+            handleDrawerClose={handleDrawerClose} 
+            handleModuleChange={handleModuleChange}
+        />
         <main className={classes.content}>
             <div className={classes.toolbar} />
-            {/**
-            * Retorna un componente
-            * @param {string} componentKey
-            */}
-            {ModuleHandler("home")}
+            {/* Recupera un componente */}
+            {componentsList[module]}
         </main>
     </div>
   );
