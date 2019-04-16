@@ -1,4 +1,4 @@
-import { Fragment, useState, useEffect } from "react";
+import { Fragment, useState, useEffect, Component } from "react";
 import classNames from "classnames";
 import PropTypes from "prop-types";
 import { makeStyles } from "@material-ui/styles";
@@ -142,6 +142,7 @@ const useStyles = makeStyles(theme => ({
  * @param {boolean} disabled Si es true, deshabilita el botón.
  * @param {string} size Establece el tamaño del botón: small, medium, large.
  * @param {string} href provee al botón de un link en el caso que se requiera.
+ * @param {Component} icon Icono para mostrar en la variante round y extended.
  */
 function ButtonComponent(props) {
   const classes = useStyles();
@@ -216,9 +217,14 @@ function ButtonComponent(props) {
     >
       {/* estiliza el icon en caso que sea "extendedFab" */}
       {props.variant == "round" ? (
-        <AddIcon size={22} className={classes.fabIcon} />
+        props.icon ? (
+          React.cloneElement(props.icon, { className: classes.fabIcon })
+        ) : (
+          /* valor default en caso que no se pase el props.icon */
+          <AddIcon size={22} className={classes.fabIcon} />
+        )
       ) : (
-        <AddIcon size={22} className={classes.extendedIcon} />
+        React.cloneElement(props.icon, { className: classes.extendedIcon })
       )}
       {/* Solo si es variante extended muestra texto en los Fabs */}
       {props.variant == "extended" ? props.label : ""}
