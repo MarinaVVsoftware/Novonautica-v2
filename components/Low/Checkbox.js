@@ -44,7 +44,7 @@ function CheckBox(props) {
       obj[checkbox] = !checkAll;
 	});
 	
-    /* setea la nueva lista de checkboxes */
+    /* setea la nueva lista de checkboxess */
     setCheckboxes({ ...obj });
   }
 
