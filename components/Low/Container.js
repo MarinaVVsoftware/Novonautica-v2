@@ -14,7 +14,7 @@ const useStyles = makeStyles(theme => ({
 function Container(props) {
     const classes = useStyles();
 
-    <Paper className={classes.root} elevation={1} >
+    <Paper className={classes.root} elevation={1}>
         {props.children}
     </Paper>
 }
