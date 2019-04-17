@@ -3,6 +3,7 @@ import Checkbox from "@material-ui/core/Checkbox";
 import { makeStyles } from "@material-ui/styles";
 import FormGroup from "@material-ui/core/FormGroup";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
+import PropTypes from "prop-types";
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -17,6 +18,11 @@ const useStyles = makeStyles(theme => ({
   checked: {}
 }));
 
+/**
+ * 
+ * @param {values} array Array para que genere los checkbox
+ * @param {checkBoxState} func Funcion para que el componente padre recupere el state de los checkboxes
+ */
 function CheckBox(props) {
   const classes = useStyles();
   let checkBoxObject = {};
@@ -108,5 +114,10 @@ function CheckBox(props) {
     </FormGroup>
   );
 }
+
+CheckBox.propTypes = {
+  values: PropTypes.array.isRequired,
+  checkBoxState: PropTypes.func.isRequired
+};
 
 export default CheckBox;
