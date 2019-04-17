@@ -1,15 +1,14 @@
 import { useEffect, useState } from "react";
 import Checkbox from "@material-ui/core/Checkbox";
 import { makeStyles } from "@material-ui/styles";
-import green from "@material-ui/core/colors/green";
 import FormGroup from "@material-ui/core/FormGroup";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
 
 const useStyles = makeStyles(theme => ({
   root: {
-    color: green[600],
+    color: '#2086C7',
     "&$checked": {
-      color: green[500]
+      color: '#2086C7'
     }
   },
   color: {
@@ -31,43 +30,43 @@ function CheckBox(props) {
   });
   /* separación de estados en estados mas simples */
   const [checkAll, setCheckAll] = useState(false);
-  const [checkboxs, setCheckboxs] = useState({ ...checkBoxObject });
+  const [checkboxes, setCheckboxes] = useState({ ...checkBoxObject });
 
   const handleChange = name => event => {
-    setCheckboxs({ ...checkboxs, [name]: event.target.checked });
+    setCheckboxes({ ...checkboxes, [name]: event.target.checked });
   };
 
   function handleChangeAll() {
     /* crea un arrego vacío */
-    var obj = {};
+	var obj = {};
     /* guarda una copia de cada key del checkbox seteado con el valor booleano inverso */
-    Object.keys(checkboxs).forEach(checkbox => {
+    Object.keys(checkboxes).forEach(checkbox => {
       obj[checkbox] = !checkAll;
-    });
-    /* setea la nueva lista de checkboxs */
-    setCheckboxs({ ...obj });
+	});
+	
+    /* setea la nueva lista de checkboxes */
+    setCheckboxes({ ...obj });
   }
 
   const areChecked = state => {
-    var allTrue = Object.keys(checkboxs).every(function(k) {
-      return checkboxs[k];
+    const stateToCheck = {...state};
+    var allTrue = Object.keys(stateToCheck).every(function(k) {
+      return stateToCheck[k];
     });
     return allTrue;
   };
 
-  /*useEffect(() => {
-        const newState = {...state};
-        delete newState.checkAll;
-        props.checkBoxState(newState);
-    }, [state]);*/
-
+  	useEffect(() => {
+        props.checkBoxState(checkboxes);
+	}, [checkboxes]);
+	
   useEffect(() => {
-    if (areChecked(checkboxs)) {
+    if (areChecked(checkboxes)) {
       setCheckAll(true);
     } else {
       setCheckAll(false);
     }
-  }, [checkboxs]);
+  }, [checkboxes]);
 
   return (
     <FormGroup row>
@@ -92,12 +91,12 @@ function CheckBox(props) {
           key={element}
           control={
             <Checkbox
-              checked={checkboxs[`check${element}`]}
+              checked={checkboxes[`check${element}`]}
               onChange={handleChange(`check${element}`)}
               value={`check${element}`}
               color="primary"
               classes={{
-                root: classes.root,
+                root: classes.color,
                 checked: classes.checked
               }}
             />
