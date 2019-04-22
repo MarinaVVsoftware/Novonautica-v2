@@ -17,6 +17,13 @@ const useStyles = makeStyles((theme) => ({
 	}
 }));
 
+/**
+ * 
+ * @param {string} order Nombre del ordenamiento
+ * @param {number} orderBy Columna que es ordenada
+ * @param {func} onRequestSort Funcion que pide el ordenamiento
+ * @param {array} columns Array de columnas
+ */
 function Head(props) {
 	const classes = useStyles();
 	const columns = props.columns;
@@ -53,7 +60,8 @@ function Head(props) {
 Head.propTypes = {
 	onRequestSort: PropTypes.func.isRequired,
 	order: PropTypes.string.isRequired,
-	orderBy: PropTypes.number.isRequired
+	orderBy: PropTypes.number.isRequired,
+	columns: PropTypes.array.isRequired
 };
 
 export default Head;

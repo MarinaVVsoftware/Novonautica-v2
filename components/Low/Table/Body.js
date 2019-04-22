@@ -4,31 +4,32 @@ import { makeStyles } from '@material-ui/styles';
 import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
 import TableRow from '@material-ui/core/TableRow';
+import Row from './Row';
 
-const useStyles = makeStyles((theme) => ({
-	tableCell: {
-		color: '#E7E7E7 !important',
-		borderBottom: '1px solid rgba(112, 112, 112, 0.23) !important'
-	}
-}));
-
+/**
+ * 
+ * @param {func} getSorting Nombre para ordenar 'asc' o 'desc'.
+ * @param {func} stableSort Método que retorna un array ordenado.
+ * @param {string} order Nombre para ordenar.
+ * @param {number} orderBy Nombre para ordenar.
+ * @param {number} page Número de página.
+ * @param {number} rowsPerPage Número de filas.
+ * @param {number} emptyRows 
+ * @param {array} data Array de información.
+ */
 function Body(props) {
-	const classes = useStyles();
 	const { stableSort, getSorting, order, orderBy, page, rowsPerPage, emptyRows, data } = props;
-
-	const dataRows = (data) =>
-		data.map((row, index) => (
-			<TableCell className={classes.tableCell} key={row}>
-				{row}
-			</TableCell>
-		));
 
 	return (
 		<TableBody>
 			{stableSort(data, getSorting(order, orderBy))
 				.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
 				.map((n, i) => {
-					return <TableRow key={n[0]}>{dataRows(n)}</TableRow>;
+					return (
+						<TableRow key={n[0]}>
+							<Row data={n} />
+						</TableRow>
+					);
 				})}
 			{emptyRows > 0 && (
 				<TableRow style={{ height: 49 * emptyRows }}>
@@ -38,5 +39,16 @@ function Body(props) {
 		</TableBody>
 	);
 }
+
+Body.propTypes = {
+	getSorting: PropTypes.func.isRequired,
+	stableSort: PropTypes.func.isRequired,
+	order: PropTypes.string.isRequired,
+	orderBy: PropTypes.number.isRequired,
+	page: PropTypes.number.isRequired,
+	rowsPerPage: PropTypes.number.isRequired,
+	emptyRows: PropTypes.number.isRequired,
+	data: PropTypes.array.isRequired
+};
 
 export default Body;

@@ -8,10 +8,12 @@ import Head from './../Low/Table/Head';
 import Body from './../Low/Table/Body';
 import Pagination from './../Low/Table/Pagination';
 
+// Recupera los elementos del array y el nombre a ordenar.
 function desc(a, b, orderBy) {
 	return b[orderBy] === a[orderBy] ? 0 : b[orderBy] > a[orderBy] ? 1 : -1;
 }
 
+// Ordena el array.
 function stableSort(array, cmp) {
 	const stabilizedThis = array.map((el, index) => [ el, index ]);
 	stabilizedThis.sort((a, b) => {
@@ -22,6 +24,7 @@ function stableSort(array, cmp) {
 	return stabilizedThis.map((el) => el[0]);
 }
 
+// Decide que key se usa para el ordenamiento
 function getSorting(order, orderBy) {
 	return order === 'desc' ? (a, b) => desc(a, b, orderBy) : (a, b) => -desc(a, b, orderBy);
 }
@@ -45,6 +48,12 @@ const useStyles = makeStyles((theme) => ({
 	}
 }));
 
+/**
+ * 
+ * @param {array} data Conjunto de información para las rows.
+ * @param {array} columns Conjunto de columnas para la tabla.
+ * @param {string} title Titulo para la tabla.  
+ */
 function DataTable(props) {
 	const classes = useStyles();
 	const rows = props.data ? props.data : [];
@@ -56,16 +65,19 @@ function DataTable(props) {
 	const [ rowsPerPage, setRowsPerPage ] = React.useState(5);
 	const emptyRows = rowsPerPage - Math.min(rowsPerPage, data.length - page * rowsPerPage);
 
+	// Asigna el nombre para el ordenamiento.
 	function handleRequestSort(event, property) {
 		const isDesc = orderBy === property && order === 'desc';
 		setOrder(isDesc ? 'asc' : 'desc');
 		setOrderBy(property);
 	}
 
+	// Acción para asginar nueva pagina.
 	function handleChangePage(event, newPage) {
 		setPage(newPage);
 	}
 
+	// Acción que setea las filas por página.
 	function handleChnageRowsPerPage(event) {
 		setRowsPerPage(event.target.value);
 	}
@@ -100,5 +112,11 @@ function DataTable(props) {
 		</Paper>
 	);
 }
+
+DataTable.propTypes = {
+	data: PropTypes.array.isRequired,
+	columns: PropTypes.array.isRequired,
+	title: PropTypes.title
+};
 
 export default DataTable;

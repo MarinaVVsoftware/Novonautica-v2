@@ -1,6 +1,7 @@
 import React from 'react';
 import { makeStyles } from '@material-ui/styles';
 import TablePagination from '@material-ui/core/TablePagination';
+import PropTypes from 'prop-types';
 
 const useStyles = makeStyles((theme) => ({
 	tablePagination: {
@@ -8,6 +9,14 @@ const useStyles = makeStyles((theme) => ({
 	}
 }));
 
+/**
+ * 
+ * @param {number} dataLength Tamaño de la tabla.
+ * @param {number} rowsPerPage Filas por página.
+ * @param {number} page Número de la página actual.
+ * @param {func} handleChangePage Función que cambia de página.
+ * @param {func} handleChnageRowsPerPage Función que cambia las filas.
+ */
 function Pagination(props) {
 	const classes = useStyles();
 	const { dataLength, rowsPerPage, page, handleChangePage, handleChnageRowsPerPage } = props;
@@ -31,5 +40,13 @@ function Pagination(props) {
 		/>
 	);
 }
+
+Pagination.propTypes = {
+	dataLength: PropTypes.number.isRequired,
+	rowsPerPage: PropTypes.number.isRequired,
+	page: PropTypes.number.isRequired,
+	handleChangePage: PropTypes.func.isRequired,
+	handleChnageRowsPerPage: PropTypes.func.isRequired
+};
 
 export default Pagination;

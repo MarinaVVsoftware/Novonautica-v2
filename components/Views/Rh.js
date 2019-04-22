@@ -16,8 +16,22 @@ function Rh() {
 	};
 
 	const data = [
-		[ 'Gabby George', 'Business Analyst', 'Minneapolis', 30, '$100,000' ],
-		[ 'Aiden Lloyd', 'Business Consultant', 'Dallas', 55, '$200,000' ],
+		[
+			'Gabby George',
+			'Business Analyst',
+			'Minneapolis',
+			30,
+			'$100,000',
+			[ [ 'createUser', 'Crear Usuario' ], [ 'deleteUser', 'Eliminar Usuario' ] ]
+		],
+		[
+			'Aiden Lloyd',
+			'Business Consultant',
+			'Dallas',
+			55,
+			'$200,000',
+			[ [ 'createUser', 'Crear Usuario' ], [ 'deleteUser', 'Eliminar Usuario' ] ]
+		],
 		[ 'Jaden Collins', 'Attorney', 'Santa Ana', 27, '$500,000' ],
 		[ 'Franky Rees', 'Business Analyst', 'St. Petersburg', 22, '$50,000' ],
 		[ 'Aaren Rose', 'Business Consultant', 'Toledo', 28, '$75,000' ],
@@ -48,12 +62,15 @@ function Rh() {
 		[ 'Mason Ray', 'Computer Scientist', 'San Francisco', 1000, '$142,000' ]
 	];
 
+	const actions = [ [ 'createUser', 'Crear Usuario' ], [ 'deleteUser', 'Eliminar Usuario' ] ];
+
 	const columns = [
 		[ 'name', 'Dessert (100g serving)' ],
 		[ 'calories', 'Calories' ],
 		[ 'fat', 'Fat (g)' ],
 		[ 'carbs', 'Carbs (g)' ],
-		[ 'protein', 'Protein (g)' ]
+		[ 'protein', 'Protein (g)' ],
+		[ 'actions', 'Actions' ]
 	];
 
 	return (
