@@ -3,6 +3,7 @@ import Container from '../Low/Container';
 import CheckBox from '../Low/CheckBox';
 import ComboBox from '../Low/ComboBox';
 import DataTable from '../High/DataTable';
+import { rrhh } from '../Handlers/ActionHandler';
 
 function Rh() {
 	const checkBoxState = (newState) => {
@@ -16,22 +17,8 @@ function Rh() {
 	};
 
 	const data = [
-		[
-			'Gabby George',
-			'Business Analyst',
-			'Minneapolis',
-			30,
-			'$100,000',
-			[ [ 'createUser', 'Crear Usuario' ], [ 'deleteUser', 'Eliminar Usuario' ] ]
-		],
-		[
-			'Aiden Lloyd',
-			'Business Consultant',
-			'Dallas',
-			55,
-			'$200,000',
-			[ [ 'createUser', 'Crear Usuario' ], [ 'deleteUser', 'Eliminar Usuario' ] ]
-		],
+		[ 'Gabby George', 'Business Analyst', 'Minneapolis', 30, '$100,000' ],
+		[ 'Aiden Lloyd', 'Business Consultant', 'Dallas', 55, '$200,000' ],
 		[ 'Jaden Collins', 'Attorney', 'Santa Ana', 27, '$500,000' ],
 		[ 'Franky Rees', 'Business Analyst', 'St. Petersburg', 22, '$50,000' ],
 		[ 'Aaren Rose', 'Business Consultant', 'Toledo', 28, '$75,000' ],
@@ -78,7 +65,13 @@ function Rh() {
 			Test from RH module!
 			<CheckBox values={[ 'Crear', 'Leer', 'Holo' ]} checkBoxState={checkBoxState} />
 			<ComboBox options={[ 'Crear', 'Modificar', 'Eliminar' ]} title="Combobox" comboBoxValue={comboBoxValue} />
-			<DataTable data={data} columns={columns} title="Holo" />
+			<DataTable
+				data={data}
+				actions={{ list: actions, set: rrhh }}
+				columns={columns}
+				title="Holo"
+				config={{ rowsPerPage: [ 10, 20 ], defaultSort: 'desc' }}
+			/>
 		</div>
 	);
 }

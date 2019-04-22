@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import { makeStyles } from '@material-ui/styles';
 import Typography from '@material-ui/core/Typography';
@@ -49,20 +49,24 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 /**
- * 
+ * Componente Tabla para datos dinámicos.
  * @param {array} data Conjunto de información para las rows.
+ * @param {array} actions Conjunto de acciones.
  * @param {array} columns Conjunto de columnas para la tabla.
- * @param {string} title Titulo para la tabla.  
+ * @param {string} title Titulo para la tabla. 
+ * @param {object} config Configuraciones para la tabla 
  */
 function DataTable(props) {
 	const classes = useStyles();
-	const rows = props.data ? props.data : [];
-	const columns = props.columns ? props.columns : [];
-	const [ order, setOrder ] = React.useState('asc');
-	const [ orderBy, setOrderBy ] = React.useState(0);
-	const [ data ] = React.useState(rows);
-	const [ page, setPage ] = React.useState(0);
-	const [ rowsPerPage, setRowsPerPage ] = React.useState(5);
+	const rows = props.data;
+	const columns = props.columns;
+	const rowsPerPageArray = props.config.rowsPerPage;
+	const actualRows = props.config.rowsPerPage;
+	const [ order, setOrder ] = useState(props.config.defaultSort);
+	const [ orderBy, setOrderBy ] = useState(0);
+	const [ data ] = useState(rows);
+	const [ page, setPage ] = useState(0);
+	const [ rowsPerPage, setRowsPerPage ] = useState(actualRows);
 	const emptyRows = rowsPerPage - Math.min(rowsPerPage, data.length - page * rowsPerPage);
 
 	// Asigna el nombre para el ordenamiento.
@@ -78,7 +82,7 @@ function DataTable(props) {
 	}
 
 	// Acción que setea las filas por página.
-	function handleChnageRowsPerPage(event) {
+	function handleChangeRowsPerPage(event) {
 		setRowsPerPage(event.target.value);
 	}
 
@@ -88,7 +92,7 @@ function DataTable(props) {
 				{props.title}
 			</Typography>
 			<div className={classes.tableWrapper}>
-				<Table className={classes.table} aria-labelledby="tableTitle">
+				<Table className={classes.table} aria-labelledby="tableComponent">
 					<Head order={order} orderBy={orderBy} onRequestSort={handleRequestSort} columns={columns} />
 					<Body
 						getSorting={getSorting}
@@ -99,15 +103,18 @@ function DataTable(props) {
 						rowsPerPage={rowsPerPage}
 						emptyRows={emptyRows}
 						data={data}
+						actions={props.actions.list}
+						actionsSet={props.actions.set}
 					/>
 				</Table>
 			</div>
 			<Pagination
 				dataLength={data.length}
 				rowsPerPage={rowsPerPage}
+				rowsPerPageArray={rowsPerPageArray}
 				page={page}
 				handleChangePage={handleChangePage}
-				handleChnageRowsPerPage={handleChnageRowsPerPage}
+				handleChangeRowsPerPage={handleChangeRowsPerPage}
 			/>
 		</Paper>
 	);
@@ -115,8 +122,23 @@ function DataTable(props) {
 
 DataTable.propTypes = {
 	data: PropTypes.array.isRequired,
+	actions: PropTypes.array,
 	columns: PropTypes.array.isRequired,
-	title: PropTypes.title
+	title: PropTypes.string,
+	config: PropTypes.shape({
+		rowsPerPage: PropTypes.array,
+		defaultSort: PropTypes.string
+	})
+};
+
+DataTable.defaultProps = {
+	data: [],
+	columns: [],
+	title: 'Table Actions',
+	config: {
+		rowsPerPage: [ 5, 10, 20 ],
+		defaultSort: 'asc'
+	}
 };
 
 export default DataTable;

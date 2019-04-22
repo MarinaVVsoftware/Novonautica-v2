@@ -18,7 +18,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 /**
- * 
+ * Cabezera para la tabla, muestra las columnas.
  * @param {string} order Nombre del ordenamiento
  * @param {number} orderBy Columna que es ordenada
  * @param {func} onRequestSort Funcion que pide el ordenamiento

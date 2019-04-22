@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import AppBarComponent from '../High/dashboard/AppBar';
 import DrawerComponent from '../High/dashboard/Drawer';
@@ -25,8 +25,8 @@ const useStyles = makeStyles((theme) => ({
  */
 function DashBoardComponent(props) {
 	const classes = useStyles();
-	const [ open, setOpen ] = React.useState(false);
-	const [ module, setModule ] = React.useState('Home');
+	const [ open, setOpen ] = useState(false);
+	const [ module, setModule ] = useState('Home');
 
 	// Acción que abre el drawer
 	function handleDrawerOpen() {

@@ -1,13 +1,13 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
-import { makeStyles } from '@material-ui/styles';
 import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
 import TableRow from '@material-ui/core/TableRow';
 import Row from './Row';
+import RowActions from './RowActions';
 
 /**
- * 
+ * Cuerpo de la tabla.
  * @param {func} getSorting Nombre para ordenar 'asc' o 'desc'.
  * @param {func} stableSort Método que retorna un array ordenado.
  * @param {string} order Nombre para ordenar.
@@ -16,6 +16,8 @@ import Row from './Row';
  * @param {number} rowsPerPage Número de filas.
  * @param {number} emptyRows 
  * @param {array} data Array de información.
+ * @param {array} actions Array de opciones.
+ * @param {array} actionsSet Array de opciones.
  */
 function Body(props) {
 	const { stableSort, getSorting, order, orderBy, page, rowsPerPage, emptyRows, data } = props;
@@ -28,6 +30,11 @@ function Body(props) {
 					return (
 						<TableRow key={n[0]}>
 							<Row data={n} />
+							{props.actions ? (
+								<RowActions actions={props.actions} actionsSet={props.actionsSet} row={n} />
+							) : (
+								[]
+							)}
 						</TableRow>
 					);
 				})}
@@ -48,7 +55,8 @@ Body.propTypes = {
 	page: PropTypes.number.isRequired,
 	rowsPerPage: PropTypes.number.isRequired,
 	emptyRows: PropTypes.number.isRequired,
-	data: PropTypes.array.isRequired
+	data: PropTypes.array.isRequired,
+	actions: PropTypes.array
 };
 
 export default Body;

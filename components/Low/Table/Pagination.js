@@ -10,21 +10,22 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 /**
- * 
+ * Footer para la tabla, muestra infromación como número de filas y paginación
  * @param {number} dataLength Tamaño de la tabla.
  * @param {number} rowsPerPage Filas por página.
+ * @param {Array} rowsPerPageArray Array que determina el numero de filas por página.
  * @param {number} page Número de la página actual.
  * @param {func} handleChangePage Función que cambia de página.
- * @param {func} handleChnageRowsPerPage Función que cambia las filas.
+ * @param {func} handleChangeRowsPerPage Función que cambia las filas.
  */
 function Pagination(props) {
 	const classes = useStyles();
-	const { dataLength, rowsPerPage, page, handleChangePage, handleChnageRowsPerPage } = props;
+	const { dataLength, rowsPerPage, rowsPerPageArray, page, handleChangePage, handleChangeRowsPerPage } = props;
 	return (
 		<TablePagination
 			className={classes.tablePagination}
 			classes={{ selectIcon: classes.tablePagination }}
-			rowsPerPageOptions={[ 5, 10, 25 ]}
+			rowsPerPageOptions={[ ...rowsPerPageArray, dataLength ]}
 			component="div"
 			count={dataLength}
 			rowsPerPage={rowsPerPage}
@@ -36,7 +37,7 @@ function Pagination(props) {
 				'aria-label': 'Next Page'
 			}}
 			onChangePage={handleChangePage}
-			onChangeRowsPerPage={handleChnageRowsPerPage}
+			onChangeRowsPerPage={handleChangeRowsPerPage}
 		/>
 	);
 }
@@ -44,9 +45,10 @@ function Pagination(props) {
 Pagination.propTypes = {
 	dataLength: PropTypes.number.isRequired,
 	rowsPerPage: PropTypes.number.isRequired,
+	rowsPerPageArray: PropTypes.array,
 	page: PropTypes.number.isRequired,
 	handleChangePage: PropTypes.func.isRequired,
-	handleChnageRowsPerPage: PropTypes.func.isRequired
+	handleChangeRowsPerPage: PropTypes.func.isRequired
 };
 
 export default Pagination;
