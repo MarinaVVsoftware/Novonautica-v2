@@ -63,9 +63,7 @@ function Modal(props) {
 				</AppBar>
 			) : (
 				<DialogTitle id="dialog-title" className={classes.modal}>
-					<Typography variant="h6" color="inherit" classes={{ root: classes.color }}>
-						{props.title}
-					</Typography>
+					<Typography classes={{ root: classes.color }}>{props.title}</Typography>
 				</DialogTitle>
 			)}
 			<div className={classes.modal}>{props.children}</div>
