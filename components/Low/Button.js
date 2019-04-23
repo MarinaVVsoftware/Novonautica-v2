@@ -64,7 +64,7 @@ const useStyles = makeStyles(theme => ({
     }
   },
   disabled: {
-    backgroundColor: "0",
+    backgroundColor: "#818181 !important",
     color: "rgba(231, 231, 231, 0.25) !important"
   },
   // estilos para los estados "Success" y "Failed"
@@ -146,9 +146,13 @@ const useStyles = makeStyles(theme => ({
  */
 function ButtonComponent(props) {
   const classes = useStyles();
+  const [loading, setLoading] = useState(false);
+  const [success, setSuccess] = useState(false);
+  const [failed, setFailed] = useState(false);
+  const [disabled, setDisabled] = useState(false);
   const buttonClassname = classNames({
-    [classes.buttonSuccess]: props.success,
-    [classes.buttonFailed]: props.failed
+    [classes.buttonSuccess]: success,
+    [classes.buttonFailed]: failed
   });
 
   // Switchea entre el tipo de botón normal y los tipos (accented, text y textAccented),
@@ -171,11 +175,50 @@ function ButtonComponent(props) {
     }
   }, [type]);
 
+  /* Escuchas activas de los estados. Sirven para permitir setear los estados
+  mediante los props, ya que el botón maneja solo sus estados mediante el evento
+  "submitClick". */
+  useEffect(() => {
+    setLoading(props.loading);
+  }, [props.loading]);
+  useEffect(() => {
+    setSuccess(props.success);
+  }, [props.success]);
+  useEffect(() => {
+    setFailed(props.failed);
+  }, [props.failed]);
+  useEffect(() => {
+    setDisabled(props.disabled);
+  }, [props.disabled]);
+
+  /*  Maneja el código de cuando se ejecute el evento onClick */
+  const HandleClick = () => {
+    if (props.onClick) {
+      props.onClick();
+    }
+
+    if (props.submitClick) {
+      const valid = props.submitClick();
+      setLoading(true);
+      setSuccess(false);
+      setFailed(false);
+      setTimeout(function() {
+        if (valid == "true") {
+          setLoading(false);
+          setSuccess(true);
+        } else {
+          setLoading(false);
+          setFailed(true);
+        }
+      }, 1000);
+    }
+  };
+
   /* código de button */
   const button = (
     <Button
       /* puede ser desactivado directamente o por loading */
-      disabled={props.loading || props.disabled}
+      disabled={loading || disabled}
       href={props.href}
       size={props.size}
       /* Si no se asigna el prop variant, establece "contained" por default */
@@ -183,24 +226,24 @@ function ButtonComponent(props) {
       className={buttonClassname + " " + type}
       /* sobreescribe los estilos según el estado del prop.success y prop.failed */
       classes={
-        props.success
+        success
           ? { label: classes.labelSuccess }
-          : props.failed
+          : failed
           ? { label: classes.labelError }
           : { disabled: classes.disabled }
       }
-      onClick={() => props.onClick()}
+      onClick={() => HandleClick()}
     >
       {props.label}
       {/* alterna entre las animaciones de success y error según los estados recibidos */}
-      {props.success && !props.loading ? (
+      {success && !loading ? (
         <CheckIcon size={22} className={classes.successIcon} />
-      ) : props.failed && !props.loading ? (
+      ) : failed && !loading ? (
         <ErrorIcon size={22} className={classes.errorIcon} />
       ) : (
         ""
       )}
-      {props.loading && (
+      {loading && (
         <CircularProgress size={22} className={classes.buttonProgress} />
       )}
     </Button>
@@ -209,7 +252,7 @@ function ButtonComponent(props) {
   /* código de fab */
   const fab = (
     <Fab
-      disabled={props.disabled}
+      disabled={disabled}
       size={props.size}
       className={classes.fab}
       /* setea la variante para los fabs */
@@ -218,13 +261,13 @@ function ButtonComponent(props) {
       {/* estiliza el icon en caso que sea "extendedFab" */}
       {props.variant == "round" ? (
         props.icon ? (
-          React.cloneElement(props.icon, { className: classes.fabIcon })
+          props.icon
         ) : (
           /* valor default en caso que no se pase el props.icon */
           <AddIcon size={22} className={classes.fabIcon} />
         )
       ) : (
-        React.cloneElement(props.icon, { className: classes.extendedIcon })
+        props.icon
       )}
       {/* Solo si es variante extended muestra texto en los Fabs */}
       {props.variant == "extended" ? props.label : ""}
@@ -238,10 +281,5 @@ function ButtonComponent(props) {
     </Fragment>
   );
 }
-
-/* Props obligatorios para el componente botón */
-ButtonComponent.propTypes = {
-  onClick: PropTypes.func.isRequired
-};
 
 export default ButtonComponent;
