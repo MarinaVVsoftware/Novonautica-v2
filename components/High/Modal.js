@@ -1,7 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { makeStyles } from '@material-ui/styles';
-import Button from '@material-ui/core/Button';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import Typography from '@material-ui/core/Typography';
 import Dialog from '@material-ui/core/Dialog';
@@ -18,6 +17,9 @@ const useStyles = makeStyles({
 		backgroundColor: '#303030',
 		color: '#E7E7E7 !important'
 	},
+	color: {
+		color: '#E7E7E7 !important'
+	},
 	appBar: {
 		backgroundColor: '#2086C7'
 	}
@@ -30,6 +32,7 @@ const useStyles = makeStyles({
  * 3.- Declarar una función handleClose(), dentro la función del hook "open" tendrá false.
  * @param {bool} open Bool para detectar cuando esta y no abierto.
  * @param {func} onClose Función que setea el hook a falso.
+ * @param {string} title Titulo para el modal.
  * @param {*} props Props por defecto del componente Dialog de material UI, excepto las funciones.
  */
 function Modal(props) {
@@ -54,13 +57,15 @@ function Modal(props) {
 							<CloseIcon />
 						</IconButton>
 						<Typography variant="h6" color="inherit" className={classes.flex}>
-							Sound
+							{props.title}
 						</Typography>
 					</Toolbar>
 				</AppBar>
 			) : (
-				<DialogTitle id="dialog-title" classes={{ root: classes.modal }}>
-					Modal Example
+				<DialogTitle id="dialog-title" className={classes.modal}>
+					<Typography variant="h6" color="inherit" classes={{ root: classes.color }}>
+						{props.title}
+					</Typography>
 				</DialogTitle>
 			)}
 			<div className={classes.modal}>{props.children}</div>
@@ -69,8 +74,13 @@ function Modal(props) {
 }
 
 Modal.propTypes = {
-	onClose: PropTypes.func,
-	selectedValue: PropTypes.string
+	open: PropTypes.bool,
+	title: PropTypes.string.isRequired,
+	onClose: PropTypes.func
+};
+
+Modal.defaultProps = {
+	title: 'New Window'
 };
 
 export default Modal;

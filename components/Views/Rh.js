@@ -78,7 +78,7 @@ function Rh() {
 			<Button variant="outlined" color="primary" onClick={handleClickOpen}>
 				Open simple dialog
 			</Button>
-			<Modal open={open} onClose={handleClose}>
+			<Modal open={open} onClose={handleClose} title="Ejemplo">
 				asdsa sad
 			</Modal>
 			<DataTable
