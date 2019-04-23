@@ -70,7 +70,7 @@ function Rh() {
 				actions={{ list: actions, set: rrhh }}
 				columns={columns}
 				title="Holo"
-				config={{ rowsPerPage: [ 10, 20 ], defaultSort: 'desc' }}
+				config={{ rowsPerPageArray: [ 10, 20 ], defaultSort: 'desc' }}
 			/>
 		</div>
 	);

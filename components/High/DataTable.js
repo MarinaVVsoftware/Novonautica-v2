@@ -60,8 +60,7 @@ function DataTable(props) {
 	const classes = useStyles();
 	const rows = props.data;
 	const columns = props.columns;
-	const rowsPerPageArray = props.config.rowsPerPage;
-	const actualRows = props.config.rowsPerPage;
+	const actualRows = props.config.rowsPerPageArray[0];
 	const [ order, setOrder ] = useState(props.config.defaultSort);
 	const [ orderBy, setOrderBy ] = useState(0);
 	const [ data ] = useState(rows);
@@ -111,7 +110,7 @@ function DataTable(props) {
 			<Pagination
 				dataLength={data.length}
 				rowsPerPage={rowsPerPage}
-				rowsPerPageArray={rowsPerPageArray}
+				rowsPerPageArray={props.config.rowsPerPageArray}
 				page={page}
 				handleChangePage={handleChangePage}
 				handleChangeRowsPerPage={handleChangeRowsPerPage}
@@ -122,11 +121,14 @@ function DataTable(props) {
 
 DataTable.propTypes = {
 	data: PropTypes.array.isRequired,
-	actions: PropTypes.array,
+	actions: PropTypes.shape({
+		list: PropTypes.array,
+		set: PropTypes.object
+	}),
 	columns: PropTypes.array.isRequired,
 	title: PropTypes.string,
 	config: PropTypes.shape({
-		rowsPerPage: PropTypes.array,
+		rowsPerPageArray: PropTypes.array,
 		defaultSort: PropTypes.string
 	})
 };
@@ -135,8 +137,12 @@ DataTable.defaultProps = {
 	data: [],
 	columns: [],
 	title: 'Table Actions',
+	actions: {
+		list: null,
+		set: null
+	},
 	config: {
-		rowsPerPage: [ 5, 10, 20 ],
+		rowsPerPageArray: [ 5, 10, 20 ],
 		defaultSort: 'asc'
 	}
 };

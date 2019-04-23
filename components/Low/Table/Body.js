@@ -20,7 +20,16 @@ import RowActions from './RowActions';
  * @param {array} actionsSet Array de opciones.
  */
 function Body(props) {
-	const { stableSort, getSorting, order, orderBy, page, rowsPerPage, emptyRows, data } = props;
+	const { stableSort, getSorting, order, orderBy, page, rowsPerPage, emptyRows, data, actions, actionsSet } = props;
+	actions ? actions : null;
+	actionsSet ? actionsSet : null;
+
+	function rowActions(actions, actionsSet, row) {
+		if (actions && actionsSet) {
+			return <RowActions actions={actions} actionsSet={actionsSet} row={row} />;
+		}
+		return null;
+	}
 
 	return (
 		<TableBody>
@@ -30,11 +39,7 @@ function Body(props) {
 					return (
 						<TableRow key={n[0]}>
 							<Row data={n} />
-							{props.actions ? (
-								<RowActions actions={props.actions} actionsSet={props.actionsSet} row={n} />
-							) : (
-								[]
-							)}
+							{rowActions(actions, actionsSet, n)}
 						</TableRow>
 					);
 				})}
