@@ -4,6 +4,8 @@ import CheckBox from '../Low/CheckBox';
 import ComboBox from '../Low/ComboBox';
 import DataTable from '../High/DataTable';
 import { rrhh } from '../Handlers/ActionHandler';
+import Modal from '../High/Modal';
+import Button from '@material-ui/core/Button';
 
 function Rh() {
 	const checkBoxState = (newState) => {
@@ -48,9 +50,7 @@ function Rh() {
 		[ 'Gabby Strickland', 'Business Process Consultant', 'Scottsdale', 26, '$45,000' ],
 		[ 'Mason Ray', 'Computer Scientist', 'San Francisco', 1000, '$142,000' ]
 	];
-
 	const actions = [ [ 'createUser', 'Crear Usuario' ], [ 'deleteUser', 'Eliminar Usuario' ] ];
-
 	const columns = [
 		[ 'name', 'Dessert (100g serving)' ],
 		[ 'calories', 'Calories' ],
@@ -60,11 +60,27 @@ function Rh() {
 		[ 'actions', 'Actions' ]
 	];
 
+	const [ open, setOpen ] = React.useState(false);
+
+	function handleClickOpen() {
+		setOpen(true);
+	}
+
+	function handleClose() {
+		setOpen(false);
+	}
+
 	return (
 		<div>
 			Test from RH module!
 			<CheckBox values={[ 'Crear', 'Leer', 'Holo' ]} checkBoxState={checkBoxState} />
 			<ComboBox options={[ 'Crear', 'Modificar', 'Eliminar' ]} title="Combobox" comboBoxValue={comboBoxValue} />
+			<Button variant="outlined" color="primary" onClick={handleClickOpen}>
+				Open simple dialog
+			</Button>
+			<Modal open={open} onClose={handleClose} title="Ejemplo">
+				asdsa sad
+			</Modal>
 			<DataTable
 				data={data}
 				actions={{ list: actions, set: rrhh }}
