@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import MenuItem from '@material-ui/core/MenuItem';
 import FormHelperText from '@material-ui/core/FormHelperText';
 import InputLabel from '@material-ui/core/InputLabel';
@@ -52,7 +52,7 @@ const useStyles = makeStyles((theme) => ({
  */
 function Combobox(props) {
 	const classes = useStyles();
-	const [ value, setValue ] = React.useState({
+	const [ value, setValue ] = useState({
 		option: props.options[0]
 	});
 
