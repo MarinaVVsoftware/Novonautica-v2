@@ -1,7 +1,7 @@
 // realiza una configuración de los estilos de Material UI
 import '../src/bootstrap';
 // --- Post bootstrap ---
-import React, { Fragment } from 'react';
+import React from 'react';
 import '../src/global.css';
 import DashBoardComponent from '../components/Views/DashBoard';
 import 'isomorphic-fetch';
@@ -18,9 +18,7 @@ Index.getInitialProps = async function() {
 
 function Index(props) {
 	return (
-		<Fragment>
 			<DashBoardComponent name="Juanito Perez" data={props.data} />
-		</Fragment>
 	);
 }
 

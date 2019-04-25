@@ -1,12 +1,20 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { makeStyles } from "@material-ui/styles";
 import PropTypes from "prop-types";
-import { FormControl, InputLabel, FilledInput } from "@material-ui/core";
+import {
+  FormControl,
+  InputLabel,
+  FilledInput,
+  FormHelperText
+} from "@material-ui/core";
+import Label from "./Label";
 
 const useStyles = makeStyles(theme => ({
   root: {},
   formControl: {
     margin: theme.spacing.unit,
+    marginBottom: "0px",
+    width: "200px",
     backgroundColor: "#424242",
     "&:disabled": {
       backgroundColor: "green !important"
@@ -47,18 +55,26 @@ const useStyles = makeStyles(theme => ({
       borderBottom: "#707070 !important"
     },
     /* reemplaza un estilo que causa bug */
-    "&:hover:not($disabled):not($error):not($focused):before": {
+    "&:hover:not(disabled):not(error):not(focused):before": {
       borderBottom: "1px #707070 !important"
     }
+  },
+  FormHelperText: {
+    position: "relative",
+    margin: "4px",
+    marginLeft: "12px",
+    width: "192px",
+    backgroundColor: "transparent !important"
   }
 }));
 
 /** Componente "Textbox". Es un componente manejado por un High component para formar
  * formularios complejos. Contiene estados de error y validación.
  * @param {string} label Texto mostrado como título del textbox.
+ * @param {string} name Nombre "estructural" del componente en el form.
+ * @param {boolean} click Flag del click del button form.
+ * @param {boolean} dialog booleano que usa para limpiar los estados a partir de un dialog event.
  * @param {boolean} disabled Deshabilita el componente.
- * @param {boolean} error Setea el estado interno de "error".
- * @param {string} errorLabel Mensaje de error mostrado si el estado error es true. Reemplaza el label.
  * @param {boolean} required Establece si es un formulario requerido del conjunto.
  * @param {string} id id y name del formulario.
  * @param {string} multiline Convierte el textbox en un textboxArea.
@@ -69,11 +85,43 @@ const useStyles = makeStyles(theme => ({
 function Textbox(props) {
   const classes = useStyles();
   const [value, setValue] = useState("");
+  const [valid, setValid] = useState(true);
+  const [errorLabel, setErrorLabel] = useState(props.handleErrors(props.name));
+
+  // escucha cada que el formulario hace submit
+  useEffect(() => {
+    setValid(props.handleValid(props.name));
+    setErrorLabel(props.handleErrors(props.name));
+  }, [props.click]);
+
+  // escucha cada que el diálogo se cierra, y limpia los estados
+  useEffect(() => {
+    if (!props.dialog) {
+      setValue("");
+      setValid(props.handleValid(props.name));
+      setErrorLabel(props.handleErrors(props.name));
+    }
+  }, [props.dialog]);
 
   /* Cada que el input cambie, lo setea */
   const HandleChange = e => {
     setValue(e.target.value);
   };
+
+  // Escucha y manda el valor al Form Padre
+  useEffect(() => {
+    props.handleValue(props.name, value);
+  }, [value]);
+
+  // Escucha por el estado de "valid"
+  useEffect(() => {
+    setValid(props.handleValid(props.name));
+  }, [value]);
+
+  // Escucha por los textos de error a mostrar
+  useEffect(() => {
+    setErrorLabel(props.handleErrors(props.name));
+  }, [value]);
 
   return (
     <div>
@@ -81,17 +129,15 @@ function Textbox(props) {
         variant="filled"
         className={classes.formControl}
         disabled={props.disabled}
-        error={props.error}
+        error={!valid}
         required={props.required}
       >
         {/* Label en la parte superior del textbox, aqui se anuncia el nombre del textbox */}
         <InputLabel
           className={classes.inputLabel}
-          /* mantiene el label estático si hay un error. */
-          shrink={props.error}
           /* setea los estilos de focused y error, error depende del state "error" para verse */
           FormLabelClasses={
-            !props.error
+            valid
               ? {
                   focused: classes.labelFocused,
                   disabled: classes.inputLabelDisabled
@@ -103,7 +149,7 @@ function Textbox(props) {
           }
         >
           {/* alterna entre el label normal y el de error (son dos textos diferentes) */}
-          {!props.error ? props.label : props.errorLabel}
+          {props.label}
         </InputLabel>
         <FilledInput
           className={classes.filledInput}
@@ -121,12 +167,23 @@ function Textbox(props) {
           onChange={HandleChange}
         />
       </FormControl>
+      {/* Maneja el texto de error cuando un error se presenta. */}
+      {valid ? (
+        ""
+      ) : (
+        <FormHelperText className={classes.FormHelperText}>
+          <Label variant={"helperText"} gutterBottom={true}>
+            {errorLabel}
+          </Label>
+        </FormHelperText>
+      )}
     </div>
   );
 }
 
 Textbox.propTypes = {
-  label: PropTypes.string
+  label: PropTypes.string,
+  name: PropTypes.string
 };
 
 export default Textbox;
