@@ -71,6 +71,9 @@ const useStyles = makeStyles(theme => ({
 /** Componente "Textbox". Es un componente manejado por un High component para formar
  * formularios complejos. Contiene estados de error y validación.
  * @param {string} label Texto mostrado como título del textbox.
+ * @param {string} name Nombre "estructural" del componente en el form.
+ * @param {boolean} click Flag del click del button form.
+ * @param {boolean} dialog booleano que usa para limpiar los estados a partir de un dialog event.
  * @param {boolean} disabled Deshabilita el componente.
  * @param {boolean} required Establece si es un formulario requerido del conjunto.
  * @param {string} id id y name del formulario.
@@ -90,6 +93,15 @@ function Textbox(props) {
     setValid(props.handleValid(props.name));
     setErrorLabel(props.handleErrors(props.name));
   }, [props.click]);
+
+  // escucha cada que el diálogo se cierra, y limpia los estados
+  useEffect(() => {
+    if (!props.dialog) {
+      setValue("");
+      setValid(props.handleValid(props.name));
+      setErrorLabel(props.handleErrors(props.name));
+    }
+  }, [props.dialog]);
 
   /* Cada que el input cambie, lo setea */
   const HandleChange = e => {

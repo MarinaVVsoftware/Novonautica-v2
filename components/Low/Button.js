@@ -133,7 +133,10 @@ const useStyles = makeStyles(theme => ({
 /** Componente "Button". Permite mostrar un loader y tiene estilos para los estados "success" y "failed", entre
  * todas las diferentes configuraciones nativas de Material-UI/Button.
  * @param {string} label Texto que se muestra en el botón.
- * @param {function} onClick Evento que ejecutará el botón al hacer click.
+ * @param {function} onClick Evento para ejecutar un botón sin estados.
+ * @param {boolean} submitClick Evento que ejecuta las animaciones de loading success y error.
+ * @param {function} openDialog Evento que ejecuta abrir el modal asociado el boton submit.
+ * @param {boolean} dialog Necesita escuchar el estado de dialog para cambiar su estado a la par.
  * @param {boolean} loading Si es true, carga un progress y deshabilita el botón, de lo contrario muestra texto.
  * @param {boolean} success Si es true, el botón muestra la animación de success.
  * @param {boolean} failed Si es true, el botón muestra la animación de failed.
@@ -203,9 +206,10 @@ function ButtonComponent(props) {
       setSuccess(false);
       setFailed(false);
       setTimeout(function() {
-        if (valid == "true") {
+        if (valid) {
           setLoading(false);
           setSuccess(true);
+          props.openDialog();
         } else {
           setLoading(false);
           setFailed(true);
@@ -213,6 +217,15 @@ function ButtonComponent(props) {
       }, 1000);
     }
   };
+
+  /* Escucha activa por el dialog para limpiar los estados del submit button */
+  useEffect(() => {
+    if (!props.dialog) {
+      setLoading(false);
+      setSuccess(false);
+      setFailed(false);
+    }
+  }, [props.dialog]);
 
   /* código de button */
   const button = (

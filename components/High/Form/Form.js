@@ -3,6 +3,7 @@ import PropTypes from "prop-types";
 import { makeStyles } from "@material-ui/styles";
 import GridList from "@material-ui/core/GridList";
 import Button from "../../Low/Button";
+import Modal from "../Modal";
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -20,26 +21,28 @@ const useStyles = makeStyles(theme => ({
 
 /** Componente que controla todos los controles en un único lugar "form".
  * Contiene todos los algoritmos para procesar los errores y validaciones.
+ * @param {Object} structure Objeto tipo "ScructureForm" con las reglas de forms.
+ * @param {Elements} children Conjunto de formularios a renderear dentro del form.
+ * @param {function} getResponse Función que obtiene la respuesta del submit.
  */
 function FormComponent(props) {
   const classes = useStyles();
-  const [structure, setStructure] = useState(props.structure);
+  const [structure] = useState(props.structure);
   const [click, setClick] = useState(false);
-  const [submit, setSubmit] = useState(false);
+  const [dialog, setDialog] = useState(false);
   let inputs = props.children;
 
   /* función que se encarga del algoritmo para inyectar 
   los handlers a cada componente */
   const InyectProps = () => {
-    // cloneElement -> clona el elemento y le añade props,
-    // incluso puede recibir children.
     inputs = inputs.map((input, index) => {
       return React.cloneElement(input, {
         key: index,
         handleValue: HandlerValue,
         handleValid: HandleValid,
         handleErrors: HandleErrors,
-        click: click
+        click: click,
+        dialog: dialog
       });
     });
   };
@@ -60,6 +63,22 @@ function FormComponent(props) {
   /* Handler de los strings de errores */
   const HandleErrors = fieldName => {
     return structure[fieldName].errors;
+  };
+
+  /* Handler del click del botón del form */
+  const HandleButtonClick = () => {
+    return IsFormValid();
+  };
+
+  /* Handler para abrir el diálogo de confirmación */
+  const OpenDialog = () => {
+    setDialog(true);
+  };
+
+  /* Handler para cerrar el díalogo. Limpia el formulario. */
+  const CloseDialog = () => {
+    setDialog(false);
+    ResetAllControls();
   };
 
   /* Toma las reglas de validación del control a validar
@@ -84,36 +103,28 @@ function FormComponent(props) {
     });
   };
 
-  /* revisa todos los controles de la estructura por alguno que no sea válido */
+  /* Revisa todos los controles de la estructura por alguno que no sea válido */
   const IsFormValid = () => {
-    let status = "true";
+    let status = true;
     Object.keys(structure).forEach(fieldName => {
       // valida que si está vacío el control marque error
       if (structure[fieldName].state == "") {
         structure[fieldName].errors = [];
         structure[fieldName].errors.push("field is empty");
         structure[fieldName].valid = false;
-        status = "false";
+        status = false;
       }
       //si es inválido, setea falso
       if (!structure[fieldName].valid) {
-        status = "false";
+        status = false;
       }
     });
 
-    if (status) {
-      console.log(GetData());
-      // ResetAllControls();
-    }
+    if (status) GetData();
 
     // marca un click en el botón para hacer trigger de eventos
     setClick(!click);
     return status;
-  };
-
-  // Handler del click del botón del form
-  const HandleButtonClick = () => {
-    return IsFormValid();
   };
 
   /* obtiene un arreglo de las keys principales de la estructura,
@@ -122,17 +133,18 @@ function FormComponent(props) {
     Object.keys(structure).forEach(fieldName => {
       structure[fieldName].errors = [];
       structure[fieldName].state = "";
-      structure[fieldName].valid = false;
+      structure[fieldName].valid = true;
     });
   };
 
-  // Método que se encarga de obtener los valores dentro de los formularios para su envío a una API.
+  /* Método que se encarga de obtener los valores 
+  dentro de los formularios para su envío a una API. */
   const GetData = () => {
-    var res = {};
+    var data = {};
     Object.keys(structure).forEach(fieldName => {
-      res[fieldName] = structure[fieldName].state;
+      data[fieldName] = structure[fieldName].state;
     });
-    return res;
+    props.getResponse(data);
   };
 
   // Ejecuta la inyección de los props a cada control antes de su render.
@@ -141,15 +153,27 @@ function FormComponent(props) {
 
   return (
     <React.Fragment>
+      {/* Modal que abre el button Submit */}
+      <Modal
+        open={dialog}
+        onClose={CloseDialog}
+        title={"Titulo"}
+        description={"Usuario creado bb ggg grax"}
+      >
+        <Button label={"Entendido"} onClick={CloseDialog} type={"default"} />
+      </Modal>
       <div className={classes.root}>
         {/* Grid que acomoda los elementos */}
         <GridList cellHeight={"auto"} className={classes.gridList} cols={5}>
           {inputs}
         </GridList>
       </div>
+      {/* Button Submit */}
       <Button
         label={"Send"}
         submitClick={HandleButtonClick}
+        openDialog={OpenDialog}
+        dialog={dialog}
         type={"accented"}
       />
     </React.Fragment>
