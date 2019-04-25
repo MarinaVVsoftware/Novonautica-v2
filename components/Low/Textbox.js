@@ -85,6 +85,12 @@ function Textbox(props) {
   const [valid, setValid] = useState(true);
   const [errorLabel, setErrorLabel] = useState(props.handleErrors(props.name));
 
+  // escucha cada que el formulario hace submit
+  useEffect(() => {
+    setValid(props.handleValid(props.name));
+    setErrorLabel(props.handleErrors(props.name));
+  }, [props.click]);
+
   /* Cada que el input cambie, lo setea */
   const HandleChange = e => {
     setValue(e.target.value);
@@ -102,8 +108,6 @@ function Textbox(props) {
 
   // Escucha por los textos de error a mostrar
   useEffect(() => {
-    console.log("soy: " + props.name + " tengo los siguientes errores:");
-    console.log(props.errorLabel);
     setErrorLabel(props.handleErrors(props.name));
   }, [value]);
 
