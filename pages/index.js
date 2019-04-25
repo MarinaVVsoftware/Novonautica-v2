@@ -1,82 +1,25 @@
 // realiza una configuración de los estilos de Material UI
-import "../src/bootstrap";
+import '../src/bootstrap';
 // --- Post bootstrap ---
-import React, { Fragment, useEffect } from "react";
-import "../src/global.css";
-import { Paper } from "@material-ui/core";
-import { makeStyles } from "@material-ui/styles";
-import FormComponent from "../components/High/Form/Form";
-import Textbox from "../components/Low/Textbox";
-import StructureForm from "../components/High/Form/StructureForm";
-import rulesTypes from "../components/High/Form/RulesTypes";
+import React from 'react';
+import '../src/global.css';
+import DashBoardComponent from '../components/Views/DashBoard';
+import 'isomorphic-fetch';
 
-const useStyles = makeStyles(theme => ({
-  root: {
-    width: "100%",
-    height: "500px"
-  }
-}));
+Index.getInitialProps = async function() {
+	// Fetch la información
+	const res = await fetch('https://api.myjson.com/bins/xein4');
+	const data = await res.json();
+	// Retorna el response a un objeto data
+	return {
+		data: { ...data }
+	};
+};
 
 function Index(props) {
-  const classes = useStyles();
-
-  let params = [
-    {
-      key: "user",
-      rules: rulesTypes.basicString
-    },
-    {
-      key: "password",
-      rules: rulesTypes.password
-    },
-    {
-      key: "user1",
-      rules: rulesTypes.basicString
-    },
-    {
-      key: "password1",
-      rules: rulesTypes.password
-    },
-    {
-      key: "user2",
-      rules: rulesTypes.basicString
-    },
-    {
-      key: "password2",
-      rules: rulesTypes.password
-    },
-    {
-      key: "user3",
-      rules: rulesTypes.basicString
-    },
-    {
-      key: "password3",
-      rules: rulesTypes.password
-    }
-  ];
-  let structure = new StructureForm(params);
-
-  // useEffect(() => {
-  //   console.log(structure);
-  //   console.log(JSON.stringify(structure));
-  // }, []);
-
-  return (
-    <Fragment>
-      <Paper className={classes.root}>
-        <FormComponent structure={structure}>
-          <Textbox label={"user"} name={"user"} />
-          <Textbox label={"password"} name={"password"} />
-          <Textbox label={"user1"} name={"user1"} />
-          <Textbox label={"password1"} name={"password1"} />
-          <Textbox label={"user2"} name={"user2"} />
-          <Textbox label={"password2"} name={"password2"} />
-          <Textbox label={"user3"} name={"user3"} />
-          <Textbox label={"password3"} name={"password3"} />
-        </FormComponent>
-      </Paper>
-    </Fragment>
-  );
+	return (
+			<DashBoardComponent name="Juanito Perez" data={props.data} />
+	);
 }
 
 export default Index;

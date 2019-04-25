@@ -32,7 +32,6 @@ function getSorting(order, orderBy) {
 const useStyles = makeStyles((theme) => ({
 	root: {
 		width: '100%',
-		marginTop: theme.spacing.unit * 3,
 		backgroundColor: '#424242'
 	},
 	table: {

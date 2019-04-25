@@ -50,7 +50,7 @@ function Modal(props) {
   function handleClose() {
     onClose();
   }
-
+  
   return (
     <Dialog
       aria-labelledby="Dialog"
