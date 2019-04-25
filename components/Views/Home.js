@@ -20,7 +20,7 @@ export default function Home() {
   const classes = useStyles();
   return (
     <div className={classes.size}>
-      <img className={classes.imageSize} src={require('../../static/marinavv-isotipo.svg')} />
+      <img className={classes.imageSize} src={require('../../static/marinavv-isotipo.svg')}  />
     </div>
   );
 }
