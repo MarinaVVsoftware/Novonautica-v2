@@ -2,12 +2,9 @@ import React from 'react';
 import Container from '../Low/Container';
 import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/styles';
-import CheckBox from '../Low/CheckBox';
-import ComboBox from '../Low/ComboBox';
 import DataTable from '../High/DataTable';
 import { rrhh } from '../Handlers/ActionHandler';
-import Modal from '../High/Modal';
-import Button from '@material-ui/core/Button';
+import * as tableDummy from '../../dummy/table';
 
 const useStyles = makeStyles((theme) => ({
 	color: {
@@ -19,14 +16,18 @@ function Rrhh() {
 	return (
 		<div>
 			<Container>
-				<Typography variant="subtitle1" className={classes.color}>
+				<Typography variant="h6" className={classes.color}>
 					Recursos Humanos
 				</Typography>
 			</Container>
 			<Container>
-				<Typography variant="subtitle1" className={classes.color}>
-					Recursos Humanos
-				</Typography>
+				<DataTable
+					data={tableDummy.data}
+					actions={{ list: tableDummy.actions, set: rrhh }}
+					columns={tableDummy.columns}
+					title="Lista de Usuarios"
+					config={{ rowsPerPageArray: [ 10, 20 ], defaultSort: 'desc' }}
+				/>
 			</Container>
 		</div>
 	);

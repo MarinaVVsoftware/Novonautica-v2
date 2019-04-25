@@ -9,6 +9,7 @@ import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
 import MenuItemNested from './MenuItemNested';
+import Tooltip from '@material-ui/core/Tooltip';
 import PropTypes from 'prop-types';
 
 const useStyles = makeStyles((theme) => ({
@@ -49,16 +50,19 @@ function MenuItem(props) {
 				// Si menuItem.subModules está declarado, se ejecuta el handleClickNested, sino handleClick
 				onClick={() => (menuItem.subModules ? handleClickNested() : handleClick(props, menuItem.moduleName))}
 			>
-				<ListItemIcon className={classes.color}>
-					{/* Si iconHandler[menuItem.moduleName] 
+				<Tooltip title={menuItem.moduleName} placement="right-start">
+					<ListItemIcon className={classes.color}>
+						{/* Si iconHandler[menuItem.moduleName] 
                         esta declarado le asigna el icono, 
                         sino realiza un fallback con el icono explore */}
-					{iconHandler[menuItem.moduleName] ? iconHandler[menuItem.moduleName] : <Explore />}
-				</ListItemIcon>
+						{iconHandler[menuItem.moduleName] ? iconHandler[menuItem.moduleName] : <Explore />}
+					</ListItemIcon>
+				</Tooltip>
 				<ListItemText classes={{ primary: classes.color }} primary={menuItem.moduleName} />
 				{/* Si menu.subModules esta declarado, realiza otra condición para operar el icono del dropdown */}
 				{menuItem.subModules ? open ? <ExpandLess /> : <ExpandMore /> : ''}
 			</ListItem>
+
 			{/* Si menuItem.subModules esta declarado, llama al componente del dropdown */}
 			{menuItem.subModules ? (
 				<Collapse in={open} timeout="auto" unmountOnExit>

@@ -7,6 +7,7 @@ import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
 import PropTypes from 'prop-types';
 import ExitApp from '@material-ui/icons/ExitToApp';
+import Tooltip from '@material-ui/core/Tooltip';
 import MenuItem from './../../Low/MenuItem';
 
 const useStyles = makeStyles((theme) => ({
@@ -41,10 +42,13 @@ function MenuComponent(props) {
 			</List>
 			<div>
 				<Divider />
+
 				<ListItem button key={'exit'} onClick={() => handleClick(props.handleDrawerClose)}>
-					<ListItemIcon className={classes.colorRed}>
-						<ExitApp />
-					</ListItemIcon>
+					<Tooltip title="Salir" placement="right-start">
+						<ListItemIcon className={classes.colorRed}>
+							<ExitApp />
+						</ListItemIcon>
+					</Tooltip>
 					<ListItemText classes={{ primary: classes.color }} primary={'Salir'} />
 				</ListItem>
 			</div>
