@@ -7,11 +7,15 @@ import Textbox from '../Low/Textbox';
 import StructureForm from '../High/Form/StructureForm';
 import rulesTypes from '../High/Form/RulesTypes';
 import Button from '../Low/Button';
-import Combobox from '../Low/ComboBox';
+import Combobox from '../Low/Combobox';
+import DataTable from '../High/DataTable';
+import * as tableDummy from '../../dummy/table';
+import { rrhh } from '../Handlers/ActionHandler';
 
 const useStyles = makeStyles((theme) => ({
 	color: {
-		color: '#e7e7e7 !important'
+		color: '#e7e7e7 !important',
+		marginBottom: '10px'
 	}
 }));
 function Rrhh() {
@@ -19,15 +23,27 @@ function Rrhh() {
 
 	let params = [
 		{
-			key: 'rolNameq',
+			key: 'nombre',
 			rules: rulesTypes.basicString
 		},
 		{
-			key: 'rolNamew',
+			key: 'usuario',
 			rules: rulesTypes.basicString
 		},
 		{
-			key: 'comboboxMagic',
+			key: 'email',
+			rules: rulesTypes.basicString
+		},
+		{
+			key: 'password',
+			rules: rulesTypes.password
+		},
+		{
+			key: 'status',
+			rules: null
+		},
+		{
+			key: 'rol',
 			rules: null
 		}
 	];
@@ -43,7 +59,7 @@ function Rrhh() {
 		<div>
 			<Container>
 				<Typography variant="h6" className={classes.color}>
-					Roles
+					Crear Usuario
 				</Typography>
 				<Form
 					structure={structure}
@@ -54,10 +70,22 @@ function Rrhh() {
 					getResponse={getResponse}
 					modalActions={actions}
 				>
-					<Textbox label={'rolNameq'} name={'rolNameq'} />
-					<Textbox label={'rolNamew'} name={'rolNamew'} />
-					<Combobox options={[ 'a', 'v', 'f' ]} title={'comboboxMagic'} name={'comboboxMagic'} />
+					<Textbox label={'Nombre'} name={'nombre'} />
+					<Textbox label={'Usuario'} name={'usuario'} />
+					<Textbox label={'Email'} name={'email'} />
+					<Textbox label={'Contraseña'} name={'password'} />
+					<Combobox options={[ 'a', 'v', 'f' ]} title={'Status'} name={'status'} />
+					<Combobox options={[ 'a', 'v', 'f' ]} title={'Rol'} name={'rol'} />
 				</Form>
+			</Container>
+			<Container>
+				<DataTable
+					data={tableDummy.data}
+					actions={{ list: tableDummy.actions, set: rrhh }}
+					columns={tableDummy.columns}
+					title="Lista de Usuarios"
+					config={{ rowsPerPageArray: [ 10, 20 ], defaultSort: 'desc' }}
+				/>
 			</Container>
 		</div>
 	);
