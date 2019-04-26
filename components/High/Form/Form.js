@@ -24,6 +24,11 @@ const useStyles = makeStyles(theme => ({
  * @param {Object} structure Objeto tipo "ScructureForm" con las reglas de forms.
  * @param {Elements} children Conjunto de formularios a renderear dentro del form.
  * @param {function} getResponse Función que obtiene la respuesta del submit.
+ * @param {string} modalTitle Titulo del modal.
+ * @param {string} modalDescription Descripción dentro del modal.
+ * @param {Elements} modalActions Conjunto de botones a renderear como Actions del modal.
+ * @param {string} submitLabel Texto del botón submit.
+ * @param {string} submitType Tipo del botón.
  */
 function FormComponent(props) {
   const classes = useStyles();
@@ -31,6 +36,7 @@ function FormComponent(props) {
   const [click, setClick] = useState(false);
   const [dialog, setDialog] = useState(false);
   let inputs = props.children;
+  let actions = props.modalActions;
 
   /* función que se encarga del algoritmo para inyectar 
   los handlers a cada componente */
@@ -43,6 +49,15 @@ function FormComponent(props) {
         handleErrors: HandleErrors,
         click: click,
         dialog: dialog
+      });
+    });
+  };
+
+  const CreateActions = () => {
+    actions = actions.map((input, index) => {
+      return React.cloneElement(input, {
+        key: index,
+        onClick: CloseDialog
       });
     });
   };
@@ -150,6 +165,7 @@ function FormComponent(props) {
   // Ejecuta la inyección de los props a cada control antes de su render.
   // esta función debe ir hasta abajo antes del render. Se ejecuta ahí.
   InyectProps();
+  CreateActions();
 
   return (
     <React.Fragment>
@@ -157,10 +173,10 @@ function FormComponent(props) {
       <Modal
         open={dialog}
         onClose={CloseDialog}
-        title={"Titulo"}
-        description={"Usuario creado bb ggg grax"}
+        title={props.modalTitle}
+        description={props.modalDescription}
       >
-        <Button label={"Entendido"} onClick={CloseDialog} type={"default"} />
+        {actions}
       </Modal>
       <div className={classes.root}>
         {/* Grid que acomoda los elementos */}
@@ -170,18 +186,19 @@ function FormComponent(props) {
       </div>
       {/* Button Submit */}
       <Button
-        label={"Send"}
+        label={props.submitLabel}
         submitClick={HandleButtonClick}
         openDialog={OpenDialog}
         dialog={dialog}
-        type={"accented"}
+        type={props.submitType}
       />
     </React.Fragment>
   );
 }
 
 FormComponent.propTypes = {
-  structure: PropTypes.object.isRequired
+  structure: PropTypes.object.isRequired,
+  getResponse: PropTypes.func.isRequired
 };
 
 export default FormComponent;
