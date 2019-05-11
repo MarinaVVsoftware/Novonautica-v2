@@ -80,3 +80,6 @@ package-lock.json
 
 # env vars
 .env
+
+# exclusión del folder de deploy de next
+out/
