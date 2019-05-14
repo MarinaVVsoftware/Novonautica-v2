@@ -5,7 +5,7 @@ const path = require("path");
 // adecuación para ser deployeado en now.sh
 module.exports = withImages(
   withCSS({
-    target: "server",
+    target: "serverless",
     webpack(config, options) {
       config.resolve.alias["components"] = path.join(__dirname, "components");
       return config;
