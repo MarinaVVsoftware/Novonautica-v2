@@ -84,15 +84,21 @@ function Login(props) {
                 });
               }, 1000);
             } else {
+              setLoading(false);
+              setFailed(true);
               HandleFailed(true);
               HandleError(response.error);
             }
           } else {
+            setLoading(false);
+            setFailed(true);
             HandleFailed(true);
             HandleError("Algo ha fallado. Contacte a soporte");
           }
         })
         .catch(error => {
+          setLoading(false);
+          setFailed(true);
           HandleFailed(true);
           HandleError("Algo ha fallado. Contacte a soporte");
         });
@@ -102,7 +108,7 @@ function Login(props) {
   // resetea los estados solo necesarios para el login
   function StartLogin() {
     setSuccess(false);
-    setLoading(false);
+    setLoading(true);
     setFailed(false);
     setError("");
   }
@@ -114,6 +120,8 @@ function Login(props) {
 
     // si alguno de los campos está vacío
     if (user == "" || password == "") {
+      setLoading(false);
+
       HandleFailed(true);
       HandleError("Rellene todos los campos para iniciar sesión.");
       return false;
@@ -123,6 +131,7 @@ function Login(props) {
       if (/^[a-z0-9]+$/i.test(password)) return true;
       else {
         // si el regex contraseña falla
+        setLoading(false);
         HandleFailed(true);
         HandleError(
           "El campo contraseña solo debe contener caracteres alfanuméricos."
@@ -131,6 +140,7 @@ function Login(props) {
       }
     } else {
       // si el regex de usuario falla
+      setLoading(false);
       setFailed(true);
       setError("Inserte un correo válido.");
       return false;

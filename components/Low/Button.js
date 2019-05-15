@@ -214,7 +214,7 @@ function ButtonComponent(props) {
           setLoading(false);
           setFailed(true);
         }
-      }, 1000);
+      }, 700);
     }
   };
 
