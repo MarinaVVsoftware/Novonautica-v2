@@ -1,4 +1,5 @@
-import firebase from "firebase";
+import * as firebase from "firebase/app";
+import "firebase/auth";
 import config from "./FirebaseConfig";
 
 /** Firebase Class: Instancia el servidor de Firebase Client y contiene los métodos
