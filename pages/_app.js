@@ -1,19 +1,18 @@
 /** next.js usa _app.js para inicializar las páginas.
  * Este documento lo que hace es hacer override y tomar el control
  * de la inicialización de las páginas, permitiendo hacer cosas como:
- * 
+ *
  * - Layout peristente entre cambios de la página
  * - Mantenet el estado de la navegación de las páginas
  * - Manejo custom de errores usando "componentDidCatch"
  * - Inyectar data adicional a la página
  */
-import '../src/bootstrap';
 // --- Post bootstrap -----
-import React from 'react';
-import App, { Container } from 'next/app';
-import { StylesProvider, ThemeProvider } from '@material-ui/styles';
-import CssBaseline from '@material-ui/core/CssBaseline';
-import getPageContext from '../src/getPageContext';
+import React from "react";
+import App, { Container } from "next/app";
+import { StylesProvider, ThemeProvider } from "@material-ui/styles";
+import CssBaseline from "@material-ui/core/CssBaseline";
+import getPageContext from "../src/getPageContext";
 
 class MyApp extends App {
   constructor() {
@@ -23,8 +22,8 @@ class MyApp extends App {
 
   componentDidMount() {
     // Remove the server-side injected CSS.
-    const jssStyles = document.querySelector('#jss-server-side');
-    if (jssStyles && jssStyles.parentNode) {
+    const jssStyles = document.querySelector("#jss-server-side");
+    if (jssStyles) {
       jssStyles.parentNode.removeChild(jssStyles);
     }
   }
@@ -37,8 +36,7 @@ class MyApp extends App {
         <StylesProvider
           generateClassName={this.pageContext.generateClassName}
           sheetsRegistry={this.pageContext.sheetsRegistry}
-          sheetsManager={this.pageContext.sheetsManager}
-        >
+          sheetsManager={this.pageContext.sheetsManager}>
           {/* ThemeProvider makes the theme available down the React
               tree thanks to React context. */}
           <ThemeProvider theme={this.pageContext.theme}>

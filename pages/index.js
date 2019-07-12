@@ -1,5 +1,4 @@
 // realiza una configuración de los estilos de Material UI
-import "../src/bootstrap";
 // --- Post bootstrap ---
 import React from "react";
 import "../src/global.css";
