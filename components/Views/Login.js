@@ -7,6 +7,7 @@ import TextboxBase from "../Low/TextboxBase";
 import ButtonComponent from "../Low/Button";
 import Logo from "../High/Login/Logo";
 import Router from "next/router";
+import jsCookie from "js-cookie";
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -62,41 +63,44 @@ function Login(props) {
     setFailed(false);
   };
 
+  const params = {
+    email: "",
+    password: ""
+  };
+
+  const config = {
+    method: "POST",
+    body: params,
+    headers: {
+      "Content-Type": "application/json"
+    }
+  };
+
   // Maneja la lógica del submit del botón "iniciar sesión".
   const HandleClick = () => {
     StartLogin();
     if (IsLoginValidated()) {
-      firebase
-        .login(user, password)
-        .then(function(response) {
-          // si trae response, es que todo fue OK
-          if (response) {
-            // si trae el objeto usuario, el login fue OK
-            if (response.user) {
+      params.email = user;
+      params.password = password;
+      config.body = JSON.stringify(params);
+      fetch("http://localhost:8079/api/auth/login/", config)
+        .then(response => response.json())
+        .then(data => {
+          if (data.error === null) {
+            if (typeof Storage !== "undefined") {
+              jsCookie.set("token", data.token);
               setLoading(false);
               setSuccess(true);
-              // espera un segundo para dar sentido de fluidez, y luego
-              // navega al dashboard
-              setTimeout(function() {
-                // navega a una ruta
-                Router.push({
-                  pathname: "/"
-                });
-              }, 1000);
-            } else {
-              setLoading(false);
-              setFailed(true);
-              HandleFailed(true);
-              HandleError(response.error);
+              Router.push({
+                pathname: "/"
+              });
             }
           } else {
-            setLoading(false);
-            setFailed(true);
-            HandleFailed(true);
-            HandleError("Algo ha fallado. Contacte a soporte");
+            throw new Error("Algo ha fallado");
           }
         })
         .catch(error => {
+          console.log(error);
           setLoading(false);
           setFailed(true);
           HandleFailed(true);
