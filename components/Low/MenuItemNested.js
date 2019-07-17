@@ -14,7 +14,7 @@ const useStyles = makeStyles(theme => ({
     color: "#e7e7e7 !important"
   },
   nested: {
-    paddingLeft: theme.spacing.unit * 4
+    paddingLeft: theme.spacing(4)
   }
 }));
 
@@ -34,8 +34,7 @@ function MenuItemNested(props) {
         button
         className={classes.nested}
         // Se realiza la funcion del handleClick traida desde props
-        onClick={() => props.handleClick(props, menuItem.subModuleName)}
-      >
+        onClick={() => props.handleClick(props, menuItem.subModuleName)}>
         <Tooltip title={menuItem.subModuleName} placement="right-start">
           <ListItemIcon className={classes.color}>
             {iconHandler[menuItem.subModuleName] ? (

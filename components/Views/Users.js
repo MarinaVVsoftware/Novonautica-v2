@@ -23,11 +23,11 @@ const useStyles = makeStyles(theme => ({
 }));
 function Users() {
   const classes = useStyles();
-  const status = useFetch(
+  const [statusData, statusLoading] = useFetch(
     "https://novocore-dev.novonautica.com/api/users/status/",
     "GET"
   );
-  const rol = useFetch(
+  const [rolData, rolLoading] = useFetch(
     "https://novocore-dev.novonautica.com/api/users/roles/",
     "GET"
   );
@@ -65,38 +65,6 @@ function Users() {
 
   const actions = [<Button label={"Aceptar"} type={"default"} />];
 
-  const forms = (
-    <Fragment>
-      {status.loading && rol.loading ? (
-        <Loader />
-      ) : (
-        <Form
-          structure={structure}
-          modalTitle={"Crear Usuario"}
-          modalDescription={"El usuario se ha creado exitosamente."}
-          submitLabel={"guardar"}
-          submitType={"accented"}
-          getResponse={getResponse}
-          modalActions={actions}>
-          <Textbox label={"Nombre"} name={"nombre"} />
-          <Textbox label={"Usuario"} name={"usuario"} />
-          <Textbox label={"Email"} name={"email"} />
-          <Textbox label={"Contraseña"} name={"password"} type="password" />
-          <Combobox
-            options={status.data.status.map(status => status.statusName)}
-            title={"Status"}
-            name={"status"}
-          />
-          {/* <Combobox
-            options={rol.roles.map(rol => rol.rolName)}
-            title={"Rol"}
-            name={"rol"}
-          /> */}
-        </Form>
-      )}
-    </Fragment>
-  );
-
   return (
     <div>
       <Container>
@@ -104,9 +72,35 @@ function Users() {
           fontWeight="fontWeightRegular"
           fontSize="h5.fontSize"
           className={classes.Box}>
-          {"value: " + status.loading + " | another value: " + rol.loading}
+          Crear Usuario
         </Box>
-        {forms}
+        {statusLoading || rolLoading ? (
+          <Loader />
+        ) : (
+          <Form
+            structure={structure}
+            modalTitle={"Crear Usuario"}
+            modalDescription={"El usuario se ha creado exitosamente."}
+            submitLabel={"guardar"}
+            submitType={"accented"}
+            getResponse={getResponse}
+            modalActions={actions}>
+            <Textbox label={"Nombre"} name={"nombre"} />
+            <Textbox label={"Usuario"} name={"usuario"} />
+            <Textbox label={"Email"} name={"email"} />
+            <Textbox label={"Contraseña"} name={"password"} type="password" />
+            <Combobox
+              options={statusData.status.map(status => status.statusName)}
+              title={"Status"}
+              name={"status"}
+            />
+            <Combobox
+              options={rolData.roles.map(rol => rol.rolName)}
+              title={"Rol"}
+              name={"rol"}
+            />
+          </Form>
+        )}
       </Container>
       {/*<Container>
         <DataTable

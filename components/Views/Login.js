@@ -12,18 +12,18 @@ import jsCookie from "js-cookie";
 const useStyles = makeStyles(theme => ({
   root: {
     ...theme.mixins.gutters(),
-    paddingTop: theme.spacing.unit * 2,
-    paddingBottom: theme.spacing.unit * 2,
+    paddingTop: theme.spacing(2),
+    paddingBottom: theme.spacing(2),
     height: "100%"
   },
   loginPaper: {
     position: "absolute",
-    paddingTop: theme.spacing.unit * 2,
-    paddingBottom: theme.spacing.unit * 2,
+    paddingTop: theme.spacing(2),
+    paddingBottom: theme.spacing(2),
     width: "260px",
     height: "260px",
     margin: "auto",
-    top: theme.spacing.unit * -8,
+    top: theme.spacing(-8),
     bottom: 0,
     left: 0,
     right: 0,

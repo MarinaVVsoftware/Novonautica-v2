@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import fetch from "isomorphic-fetch";
 import jsCookie from "js-cookie";
 
-const useFetch = (url, method) => {
+function useFetch(url, method) {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
   const token = jsCookie.get("token");
@@ -16,7 +16,7 @@ const useFetch = (url, method) => {
   };
 
   async function fetchUrl() {
-    // process.env.NODE_TLS_REJECT_UNAUTHORIZED;
+    process.env.NODE_TLS_REJECT_UNAUTHORIZED;
     const response = await fetch(url, params);
     const json = await response.json();
 
@@ -28,7 +28,7 @@ const useFetch = (url, method) => {
     fetchUrl();
   }, []);
 
-  return { data, loading };
-};
+  return [data, loading];
+}
 
 export default useFetch;

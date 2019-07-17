@@ -11,7 +11,7 @@ import WarningIcon from "@material-ui/icons/Warning";
 
 const useStyles = makeStyles(theme => ({
   close: {
-    padding: theme.spacing.unit / 2
+    padding: theme.spacing(0.5)
   },
   error: {
     backgroundColor: "#f44336"
@@ -33,7 +33,7 @@ const useStyles = makeStyles(theme => ({
   },
   iconVariant: {
     opacity: 0.9,
-    marginRight: theme.spacing.unit
+    marginRight: theme.spacing(1)
   },
   message: {
     display: "flex",
@@ -90,8 +90,7 @@ function SnackbarComponent(props) {
       autoHideDuration={props.autoHideDuration}
       anchorOrigin={{ vertical: props.vertical, horizontal: props.horizontal }}
       open={open}
-      onClose={HandleClose}
-    >
+      onClose={HandleClose}>
       <SnackbarContent
         className={classes[type]}
         onClose={HandleClose}
@@ -107,8 +106,7 @@ function SnackbarComponent(props) {
           <IconButton
             key="close"
             className={classes.close}
-            onClick={HandleClose}
-          >
+            onClick={HandleClose}>
             <CloseIcon />
           </IconButton>
         ]}

@@ -3,7 +3,7 @@ import { makeStyles } from "@material-ui/styles";
 
 const useStyles = makeStyles(theme => ({
   root: {
-    marginBottom: theme.spacing.unit * 4
+    marginBottom: theme.spacing(4)
   },
   logo: {
     width: "100%",

@@ -13,7 +13,7 @@ const useStyles = makeStyles(theme => ({
   toolbar: theme.mixins.toolbar,
   content: {
     flexGrow: 1,
-    padding: theme.spacing.unit * 2,
+    padding: theme.spacing(2),
     width: "calc(100% - 70px)"
   }
 }));

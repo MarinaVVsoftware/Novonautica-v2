@@ -20,7 +20,6 @@ const useStyles = makeStyles(theme => ({
   },
   wrapper: {
     marginTop: theme.spacing(2),
-    marginBottom: theme.spacing(2),
     position: "relative",
     margin: "auto",
     left: 0,
@@ -28,7 +27,6 @@ const useStyles = makeStyles(theme => ({
   },
   button: {
     marginTop: theme.spacing(2),
-    marginBottom: theme.spacing(2),
     borderRadius: "2px",
     color: "#E7E7E7",
     backgroundColor: "#818181",
@@ -38,7 +36,6 @@ const useStyles = makeStyles(theme => ({
   },
   buttonAccented: {
     marginTop: theme.spacing(2),
-    marginBottom: theme.spacing(2),
     borderRadius: "2px",
     color: "#E7E7E7",
     backgroundColor: "#2086C7",
@@ -48,7 +45,6 @@ const useStyles = makeStyles(theme => ({
   },
   buttonText: {
     marginTop: theme.spacing(2),
-    marginBottom: theme.spacing(2),
     borderRadius: "2px",
     color: "#E7E7E7",
     backgroundColor: "transparent",
@@ -59,7 +55,6 @@ const useStyles = makeStyles(theme => ({
   },
   buttonTextAccented: {
     marginTop: theme.spacing(2),
-    marginBottom: theme.spacing(2),
     borderRadius: "2px",
     color: "#2086C7",
     backgroundColor: "transparent",
@@ -119,7 +114,7 @@ const useStyles = makeStyles(theme => ({
   },
   // estilos para los fabs
   fab: {
-    margin: theme.spacing,
+    margin: theme.spacing(1),
     backgroundColor: "#818181",
     color: "#E7E7E7",
     "&:hover": {
@@ -130,7 +125,7 @@ const useStyles = makeStyles(theme => ({
     color: "#E7E7E7"
   },
   extendedIcon: {
-    marginRight: theme.spacing,
+    marginRight: theme.spacing(1),
     color: "#E7E7E7"
   }
 }));
