@@ -19,14 +19,16 @@ const useStyles = makeStyles(theme => ({
     right: 0
   },
   wrapper: {
-    margin: theme.spacing.unit,
+    marginTop: theme.spacing(2),
+    marginBottom: theme.spacing(2),
     position: "relative",
     margin: "auto",
     left: 0,
     right: 0
   },
   button: {
-    margin: theme.spacing.unit,
+    marginTop: theme.spacing(2),
+    marginBottom: theme.spacing(2),
     borderRadius: "2px",
     color: "#E7E7E7",
     backgroundColor: "#818181",
@@ -35,7 +37,8 @@ const useStyles = makeStyles(theme => ({
     }
   },
   buttonAccented: {
-    margin: theme.spacing.unit,
+    marginTop: theme.spacing(2),
+    marginBottom: theme.spacing(2),
     borderRadius: "2px",
     color: "#E7E7E7",
     backgroundColor: "#2086C7",
@@ -44,7 +47,8 @@ const useStyles = makeStyles(theme => ({
     }
   },
   buttonText: {
-    margin: theme.spacing.unit,
+    marginTop: theme.spacing(2),
+    marginBottom: theme.spacing(2),
     borderRadius: "2px",
     color: "#E7E7E7",
     backgroundColor: "transparent",
@@ -54,7 +58,8 @@ const useStyles = makeStyles(theme => ({
     }
   },
   buttonTextAccented: {
-    margin: theme.spacing.unit,
+    marginTop: theme.spacing(2),
+    marginBottom: theme.spacing(2),
     borderRadius: "2px",
     color: "#2086C7",
     backgroundColor: "transparent",
@@ -114,7 +119,7 @@ const useStyles = makeStyles(theme => ({
   },
   // estilos para los fabs
   fab: {
-    margin: theme.spacing.unit,
+    margin: theme.spacing,
     backgroundColor: "#818181",
     color: "#E7E7E7",
     "&:hover": {
@@ -125,7 +130,7 @@ const useStyles = makeStyles(theme => ({
     color: "#E7E7E7"
   },
   extendedIcon: {
-    marginRight: theme.spacing.unit,
+    marginRight: theme.spacing,
     color: "#E7E7E7"
   }
 }));
@@ -245,8 +250,8 @@ function ButtonComponent(props) {
           ? { label: classes.labelError }
           : { disabled: classes.disabled }
       }
-      onClick={() => HandleClick()}
-    >
+      onClick={() => HandleClick()}>
+      {props.icon && !props.variant ? props.icon : ""}
       {props.label}
       {/* alterna entre las animaciones de success y error según los estados recibidos */}
       {success && !loading ? (
@@ -269,8 +274,7 @@ function ButtonComponent(props) {
       size={props.size}
       className={classes.fab}
       /* setea la variante para los fabs */
-      variant={props.variant == "extended" ? "extended" : "round"}
-    >
+      variant={props.variant == "extended" ? "extended" : "round"}>
       {/* estiliza el icon en caso que sea "extendedFab" */}
       {props.variant == "round" ? (
         props.icon ? (

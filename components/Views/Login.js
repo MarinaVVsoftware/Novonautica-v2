@@ -69,6 +69,7 @@ function Login(props) {
   };
 
   const config = {
+    mode: "cors",
     method: "POST",
     body: params,
     headers: {
@@ -83,12 +84,13 @@ function Login(props) {
       params.email = user;
       params.password = password;
       config.body = JSON.stringify(params);
-      fetch("http://localhost:8079/api/auth/login/", config)
+      fetch("https://authcore-dev.novonautica.com/api/auth/login", config)
         .then(response => response.json())
         .then(data => {
           if (data.error === null) {
             if (typeof Storage !== "undefined") {
-              jsCookie.set("token", data.token);
+              jsCookie.set("token", data.token, { expires: 4 });
+              jsCookie.set("user", params.email, { expires: 4 });
               setLoading(false);
               setSuccess(true);
               Router.push({

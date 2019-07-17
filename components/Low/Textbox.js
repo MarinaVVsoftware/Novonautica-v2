@@ -10,11 +10,13 @@ import {
 import Label from "./Label";
 
 const useStyles = makeStyles(theme => ({
-  root: {},
+  root: {
+    "&$focus": {
+      color: "#2086C7 !important"
+    }
+  },
   formControl: {
-    margin: theme.spacing.unit,
-    marginBottom: "0px",
-    width: "200px",
+    width: "100%",
     backgroundColor: "#424242",
     "&:disabled": {
       backgroundColor: "green !important"
@@ -34,7 +36,10 @@ const useStyles = makeStyles(theme => ({
     borderRadius: "4px"
   },
   inputLabel: {
-    color: "#646464"
+    color: "#646464 !important",
+    "&:focus": {
+      color: "#2086C7 !important"
+    }
   },
   inputLabelDisabled: {
     color: "#424242 !important"
@@ -81,6 +86,7 @@ const useStyles = makeStyles(theme => ({
  * @param {int} rows La cantidad de rows que muestra dentro del textboxArea.
  * @param {int} rowsMax La cantidad máxima de rows del textboxArea.
  * @param {boolean} readOnly Convierte el textbox en "solo lectura".
+ * @param {string} type Tipo del textfield
  */
 function Textbox(props) {
   const classes = useStyles();
@@ -130,23 +136,11 @@ function Textbox(props) {
         className={classes.formControl}
         disabled={props.disabled}
         error={!valid}
-        required={props.required}
-      >
+        required={props.required}>
         {/* Label en la parte superior del textbox, aqui se anuncia el nombre del textbox */}
         <InputLabel
-          className={classes.inputLabel}
+          classes={{ focused: classes.labelFocused, root: classes.inputLabel }}
           /* setea los estilos de focused y error, error depende del state "error" para verse */
-          FormLabelClasses={
-            valid
-              ? {
-                  focused: classes.labelFocused,
-                  disabled: classes.inputLabelDisabled
-                }
-              : {
-                  focused: classes.labelFocusedError,
-                  disabled: classes.inputLabelDisabled
-                }
-          }
         >
           {/* alterna entre el label normal y el de error (son dos textos diferentes) */}
           {props.label}
@@ -163,6 +157,7 @@ function Textbox(props) {
           rows={props.rows}
           rowsMax={props.rowsMax}
           readOnly={props.readOnly}
+          type={props.type}
           value={value}
           onChange={HandleChange}
         />

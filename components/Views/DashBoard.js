@@ -52,7 +52,7 @@ function DashBoardComponent(props) {
         handleDrawerOpen={handleDrawerOpen}
       />
       <DrawerComponent
-        menu={props.data}
+        menu={props.menu}
         open={open}
         handleDrawerClose={handleDrawerClose}
         handleModuleChange={handleModuleChange}

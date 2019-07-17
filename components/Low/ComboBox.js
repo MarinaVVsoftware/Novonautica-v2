@@ -11,8 +11,7 @@ import PropTypes from "prop-types";
 const useStyles = makeStyles(theme => ({
   root: {},
   formControl: {
-    margin: theme.spacing.unit,
-    minWidth: 120,
+    width: "100%",
     backgroundColor: "#424242",
     "&:disabled": {
       backgroundColor: "green !important"
@@ -70,8 +69,7 @@ function Combobox(props) {
       <InputLabel
         htmlFor="filled-age-simple"
         className={classes.inputLabel}
-        classes={{ focused: classes.filledInputFocusesd }}
-      >
+        classes={{ focused: classes.filledInputFocusesd }}>
         {props.title}
       </InputLabel>
       <Select
@@ -88,8 +86,7 @@ function Combobox(props) {
               underline: classes.underline
             }}
           />
-        }
-      >
+        }>
         {props.options.map(option => (
           <MenuItem key={option} value={option}>
             {option}
