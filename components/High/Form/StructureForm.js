@@ -26,6 +26,7 @@ class StructureForm {
       /* Añade un elemento estructural asociado a la key con sus reglas */
       this.params.forEach(element => {
         this.structure[element.key] = {
+          type: element.type,
           rules: element.rules,
           errors: [],
           valid: true,

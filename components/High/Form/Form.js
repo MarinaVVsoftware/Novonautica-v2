@@ -33,6 +33,8 @@ const useStyles = makeStyles(theme => ({
  * @param {function} getResponse Función que obtiene la respuesta del submit.
  * @param {string} modalTitle Titulo del modal.
  * @param {string} modalDescription Descripción dentro del modal.
+ * @param {string} modalTitleError Titulo del modal en caso de que el fetch retorne error.
+ * @param {string} modalDescriptionError Descripción dentro del modal en caso que el fetch retorne error.
  * @param {Elements} modalActions Conjunto de botones a renderear como Actions del modal.
  * @param {string} submitLabel Texto del botón submit.
  * @param {string} submitType Tipo del botón.
@@ -42,6 +44,10 @@ function FormComponent(props) {
   const [structure] = useState(props.structure);
   const [click, setClick] = useState(false);
   const [dialog, setDialog] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [success, setSuccess] = useState(false);
+  const [failed, setFailed] = useState(false);
+  const [comboboxRestart, setComboboxRestart] = useState(false);
   let inputs = props.children;
   let actions = props.modalActions;
 
@@ -64,7 +70,8 @@ function FormComponent(props) {
         case "Combobox":
           return React.cloneElement(input, {
             key: index,
-            comboBoxValue: HandleComboboxValue
+            comboBoxValue: HandleComboboxValue,
+            restart: comboboxRestart
           });
 
         default:
@@ -84,6 +91,9 @@ function FormComponent(props) {
 
   /* Actualiza un control con su valor. Resetea los errores y su validez. */
   const HandlerValue = (fieldName, value) => {
+    setLoading(false);
+    setFailed(false);
+    setSuccess(false);
     structure[fieldName].errors = [];
     structure[fieldName].state = value;
     structure[fieldName].valid = true;
@@ -107,12 +117,14 @@ function FormComponent(props) {
 
   /* Obtiene el valor del combobox y lo devuelve. */
   const HandleComboboxValue = (fieldName, value) => {
-    structure[fieldName].state = value.option;
+    structure[fieldName].state = value;
   };
 
   /* Handler para abrir el diálogo de confirmación */
   const OpenDialog = () => {
     setDialog(true);
+    setLoading(false);
+    setSuccess(true);
   };
 
   /* Handler para cerrar el díalogo. Limpia el formulario. */
@@ -162,6 +174,7 @@ function FormComponent(props) {
     });
 
     if (status) GetData();
+    else setFailed(true);
 
     // marca un click en el botón para hacer trigger de eventos
     setClick(!click);
@@ -172,10 +185,25 @@ function FormComponent(props) {
   y los usa para iterar toda la estructura y limpiarla. */
   const ResetAllControls = () => {
     Object.keys(structure).forEach(fieldName => {
-      structure[fieldName].errors = [];
-      structure[fieldName].state = "";
-      structure[fieldName].valid = true;
+      switch (structure[fieldName].type) {
+        case "Textbox":
+          structure[fieldName].errors = [];
+          structure[fieldName].state = "";
+          structure[fieldName].valid = true;
+          break;
+        case "Combobox":
+          setComboboxRestart(!comboboxRestart);
+          break;
+        default:
+          structure[fieldName].errors = [];
+          structure[fieldName].valid = true;
+          break;
+      }
     });
+
+    setLoading(false);
+    setFailed(false);
+    setSuccess(false);
   };
 
   /* Método que se encarga de obtener los valores 
@@ -200,8 +228,11 @@ function FormComponent(props) {
       <Modal
         open={dialog}
         onClose={CloseDialog}
-        title={props.modalTitle} /* MODIFICARLOS */
-        description={props.modalDescription}>
+        title={!failed ? props.modalTitle : props.modalTitleError}
+        description={
+          !failed ? props.modalDescription : props.modalDescriptionError
+        }
+      >
         {actions}
       </Modal>
       <div className={classes.root}>
@@ -221,6 +252,9 @@ function FormComponent(props) {
         openDialog={OpenDialog}
         dialog={dialog}
         type={props.submitType}
+        loading={loading}
+        success={success}
+        failed={failed}
         icon={<Save className={clsx(classes.leftIcon, classes.smallIcon)} />}
       />
     </React.Fragment>

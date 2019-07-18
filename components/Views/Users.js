@@ -24,12 +24,16 @@ const useStyles = makeStyles(theme => ({
 
 function Users() {
   const classes = useStyles();
+  const [loading, setLoading] = useState(false);
 
   const [statusData, statusLoading] = useFetch("/api/users/status/", "GET");
-
   const [rolData, rolLoading] = useFetch("/api/users/roles/", "GET");
 
-  const handleSave = () => {
+  const getResponse = data => {
+    console.log(data);
+  };
+
+  const handleSave = data => {
     const [userData, userLoading] = useFetch(`/api/users/${user}`, "PUT", {
       user: {
         rolId: 6,
@@ -49,35 +53,37 @@ function Users() {
 
   let params = [
     {
-      key: "nombre",
+      key: "name",
+      type: "Textbox",
       rules: rulesTypes.basicString
     },
     {
-      key: "usuario",
+      key: "username",
+      type: "Textbox",
       rules: rulesTypes.basicString
     },
     {
       key: "email",
+      type: "Textbox",
       rules: rulesTypes.email
     },
     {
       key: "password",
+      type: "Textbox",
       rules: rulesTypes.password
     },
     {
-      key: "status",
+      key: "statusId",
+      type: "Combobox",
       rules: null
     },
     {
-      key: "rol",
+      key: "rolId",
+      type: "Combobox",
       rules: null
     }
   ];
   let structure = new StructureForm(params);
-
-  const getResponse = data => {
-    console.log(data);
-  };
 
   const actions = [<Button label={"Aceptar"} type={"default"} />];
 
@@ -87,7 +93,8 @@ function Users() {
         <Box
           fontWeight="fontWeightRegular"
           fontSize="h5.fontSize"
-          className={classes.Box}>
+          className={classes.Box}
+        >
           Crear Usuario
         </Box>
         {statusLoading || rolLoading ? (
@@ -97,23 +104,35 @@ function Users() {
             structure={structure}
             modalTitle={"Crear Usuario"}
             modalDescription={"El usuario se ha creado exitosamente."}
-            submitLabel={"guardar"}
+            modalTitleError={"Crear Usuario: error"}
+            modalDescriptionError={
+              "La creación del usuario ha fallado. Contacte con soporte."
+            }
+            submitLabel={"continuar"}
             submitType={"accented"}
             getResponse={getResponse}
-            modalActions={actions}>
-            <Textbox label={"Nombre"} name={"nombre"} />
-            <Textbox label={"Usuario"} name={"usuario"} />
+            // setLoading={loading}
+            // setResponse={setResponse}
+            modalActions={actions}
+          >
+            <Textbox label={"Nombre"} name={"name"} />
+            <Textbox label={"Usuario"} name={"username"} />
             <Textbox label={"Email"} name={"email"} />
             <Textbox label={"Contraseña"} name={"password"} type="password" />
             <Combobox
-              options={statusData.status.map(status => status.statusName)}
+              options={statusData.status.map(status => {
+                return { name: status.statusName, id: status.statusId };
+              })}
               title={"Status"}
-              name={"status"}
+              name={"statusId"}
             />
             <Combobox
-              options={rolData.roles.map(rol => rol.rolName)}
+              data={rolData.roles}
+              options={rolData.roles.map(rol => {
+                return { name: rol.rolName, id: rol.rolId };
+              })}
               title={"Rol"}
-              name={"rol"}
+              name={"rolId"}
             />
           </Form>
         )}

@@ -245,7 +245,8 @@ function ButtonComponent(props) {
           ? { label: classes.labelError }
           : { disabled: classes.disabled }
       }
-      onClick={() => HandleClick()}>
+      onClick={() => HandleClick()}
+    >
       {props.icon && !props.variant ? props.icon : ""}
       {props.label}
       {/* alterna entre las animaciones de success y error según los estados recibidos */}
@@ -269,7 +270,8 @@ function ButtonComponent(props) {
       size={props.size}
       className={classes.fab}
       /* setea la variante para los fabs */
-      variant={props.variant == "extended" ? "extended" : "round"}>
+      variant={props.variant == "extended" ? "extended" : "round"}
+    >
       {/* estiliza el icon en caso que sea "extendedFab" */}
       {props.variant == "round" ? (
         props.icon ? (
