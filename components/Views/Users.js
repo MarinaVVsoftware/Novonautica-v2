@@ -21,16 +21,32 @@ const useStyles = makeStyles(theme => ({
     marginBottom: "20px"
   }
 }));
+
 function Users() {
   const classes = useStyles();
-  const [statusData, statusLoading] = useFetch(
-    "https://novocore-dev.novonautica.com/api/users/status/",
-    "GET"
-  );
-  const [rolData, rolLoading] = useFetch(
-    "https://novocore-dev.novonautica.com/api/users/roles/",
-    "GET"
-  );
+
+  const [statusData, statusLoading] = useFetch("/api/users/status/", "GET");
+
+  const [rolData, rolLoading] = useFetch("/api/users/roles/", "GET");
+
+  const handleSave = () => {
+    const [userData, userLoading] = useFetch(`/api/users/${user}`, "PUT", {
+      user: {
+        rolId: 6,
+        statusId: 1,
+        email: "insert@mail.com",
+        userName: "insert",
+        password: "123456",
+        recruitmentDate: "2019-01-01"
+      }
+    });
+
+    return {
+      userData,
+      userLoading
+    };
+  };
+
   let params = [
     {
       key: "nombre",
@@ -102,7 +118,7 @@ function Users() {
           </Form>
         )}
       </Container>
-      {/*<Container>
+      <Container>
         <DataTable
           data={tableDummy.data}
           actions={{ list: tableDummy.actions, set: users }}
@@ -110,7 +126,7 @@ function Users() {
           title="Lista de Usuarios"
           config={{ rowsPerPageArray: [10, 20], defaultSort: "desc" }}
         />
-      </Container>*/}
+      </Container>
     </div>
   );
 }

@@ -200,7 +200,7 @@ function FormComponent(props) {
       <Modal
         open={dialog}
         onClose={CloseDialog}
-        title={props.modalTitle}
+        title={props.modalTitle} /* MODIFICARLOS */
         description={props.modalDescription}>
         {actions}
       </Modal>
