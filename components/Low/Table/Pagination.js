@@ -1,12 +1,12 @@
-import React from 'react';
-import { makeStyles } from '@material-ui/styles';
-import TablePagination from '@material-ui/core/TablePagination';
-import PropTypes from 'prop-types';
+import React from "react";
+import { makeStyles } from "@material-ui/styles";
+import TablePagination from "@material-ui/core/TablePagination";
+import PropTypes from "prop-types";
 
-const useStyles = makeStyles((theme) => ({
-	tablePagination: {
-		color: '#E7E7E7 !important'
-	}
+const useStyles = makeStyles(theme => ({
+  tablePagination: {
+    color: "#E7E7E7 !important"
+  }
 }));
 
 /**
@@ -19,36 +19,43 @@ const useStyles = makeStyles((theme) => ({
  * @param {func} handleChangeRowsPerPage Función que cambia las filas.
  */
 function Pagination(props) {
-	const classes = useStyles();
-	const { dataLength, rowsPerPage, rowsPerPageArray, page, handleChangePage, handleChangeRowsPerPage } = props;
-	return (
-		<TablePagination
-			className={classes.tablePagination}
-			classes={{ selectIcon: classes.tablePagination }}
-			rowsPerPageOptions={[ ...rowsPerPageArray, dataLength ]}
-			component="div"
-			count={dataLength}
-			rowsPerPage={rowsPerPage}
-			page={page}
-			backIconButtonProps={{
-				'aria-label': 'Previous page'
-			}}
-			nextIconButtonProps={{
-				'aria-label': 'Next Page'
-			}}
-			onChangePage={handleChangePage}
-			onChangeRowsPerPage={handleChangeRowsPerPage}
-		/>
-	);
+  const classes = useStyles();
+  const {
+    dataLength,
+    rowsPerPage,
+    rowsPerPageArray,
+    page,
+    handleChangePage,
+    handleChangeRowsPerPage
+  } = props;
+  return (
+    <TablePagination
+      className={classes.tablePagination}
+      classes={{ selectIcon: classes.tablePagination }}
+      rowsPerPageOptions={[...rowsPerPageArray]}
+      component="div"
+      count={dataLength}
+      rowsPerPage={rowsPerPage}
+      page={page}
+      backIconButtonProps={{
+        "aria-label": "Previous page"
+      }}
+      nextIconButtonProps={{
+        "aria-label": "Next Page"
+      }}
+      onChangePage={handleChangePage}
+      onChangeRowsPerPage={handleChangeRowsPerPage}
+    />
+  );
 }
 
 Pagination.propTypes = {
-	dataLength: PropTypes.number.isRequired,
-	rowsPerPage: PropTypes.number.isRequired,
-	rowsPerPageArray: PropTypes.array,
-	page: PropTypes.number.isRequired,
-	handleChangePage: PropTypes.func.isRequired,
-	handleChangeRowsPerPage: PropTypes.func.isRequired
+  dataLength: PropTypes.number.isRequired,
+  rowsPerPage: PropTypes.number.isRequired,
+  rowsPerPageArray: PropTypes.array,
+  page: PropTypes.number.isRequired,
+  handleChangePage: PropTypes.func.isRequired,
+  handleChangeRowsPerPage: PropTypes.func.isRequired
 };
 
 export default Pagination;

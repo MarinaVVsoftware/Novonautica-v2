@@ -10,10 +10,10 @@ import Button from "../Low/Button";
 import Combobox from "../Low/ComboBox";
 import Loader from "../Low/Loader";
 import DataTable from "../High/DataTable";
-import * as tableDummy from "../../dummy/table";
 import { users } from "../Handlers/ActionHandler";
 import Router from "next/router";
 import useFetch from "../../helpers/useFetch";
+import getPermissions from "../../helpers/getPermissions";
 
 const useStyles = makeStyles(theme => ({
   Box: {
@@ -22,31 +22,12 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-function Users() {
+function Users(props) {
   const classes = useStyles();
-
+  const permissions = getPermissions("RRHH", "Usuarios", props.permissions);
   const [statusData, statusLoading] = useFetch("/api/users/status/", "GET");
-
   const [rolData, rolLoading] = useFetch("/api/users/roles/", "GET");
-
-  const handleSave = () => {
-    const [userData, userLoading] = useFetch(`/api/users/${user}`, "PUT", {
-      user: {
-        rolId: 6,
-        statusId: 1,
-        email: "insert@mail.com",
-        userName: "insert",
-        password: "123456",
-        recruitmentDate: "2019-01-01"
-      }
-    });
-
-    return {
-      userData,
-      userLoading
-    };
-  };
-
+  const [usersData, usersLoading] = useFetch("/api/users/", "GET");
   let params = [
     {
       key: "nombre",
@@ -119,13 +100,18 @@ function Users() {
         )}
       </Container>
       <Container>
-        <DataTable
-          data={tableDummy.data}
-          actions={{ list: tableDummy.actions, set: users }}
-          columns={tableDummy.columns}
-          title="Lista de Usuarios"
-          config={{ rowsPerPageArray: [10, 20], defaultSort: "desc" }}
-        />
+        {usersLoading ? (
+          <Loader />
+        ) : (
+          <DataTable
+            data={usersData.users}
+            title="Lista de Usuarios"
+            config={{
+              rowsPerPage: usersData.users.length,
+              defaultSort: "desc"
+            }}
+          />
+        )}
       </Container>
     </div>
   );

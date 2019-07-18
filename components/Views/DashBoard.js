@@ -43,6 +43,14 @@ function DashBoardComponent(props) {
     moduleName ? setModule(moduleName) : setModule("Home");
   }
 
+  function actualModule() {
+    return React.cloneElement(ModuleHandler[module], {
+      permissions: props.menu
+    });
+  }
+
+  console.log(props.menu);
+
   return (
     <div className={classes.root}>
       <CssBaseline />
@@ -60,7 +68,7 @@ function DashBoardComponent(props) {
       <main className={classes.content}>
         <div className={classes.toolbar} />
         {/* Recupera un componente */}
-        {ModuleHandler[module]}
+        {actualModule()}
       </main>
     </div>
   );
