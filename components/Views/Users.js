@@ -14,43 +14,32 @@ import * as tableDummy from "../../dummy/table";
 import { users } from "../Handlers/ActionHandler";
 import Router from "next/router";
 import useFetch from "../../helpers/useFetch";
+import clsx from "clsx";
+import Save from "@material-ui/icons/Save";
+import SnackbarComponent from "../Low/Snackbar";
 
 const useStyles = makeStyles(theme => ({
   Box: {
     color: "#e7e7e7 !important",
     marginBottom: "20px"
+  },
+  leftIcon: {
+    marginRight: theme.spacing(1),
+    marginBottom: "3px"
+  },
+  smallIcon: {
+    fontSize: 20
   }
 }));
 
 function Users() {
   const classes = useStyles();
-  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(false);
+  const [errorMessage, setErrorMessage] = useState(null);
+  const status = useFetch("/api/users/statuses/", "GET");
+  const roles = useFetch("/api/users/roles/", "GET");
 
-  const [statusData, statusLoading] = useFetch("/api/users/status/", "GET");
-  const [rolData, rolLoading] = useFetch("/api/users/roles/", "GET");
-
-  const getResponse = data => {
-    console.log(data);
-  };
-
-  const handleSave = data => {
-    const [userData, userLoading] = useFetch(`/api/users/${user}`, "PUT", {
-      user: {
-        rolId: 6,
-        statusId: 1,
-        email: "insert@mail.com",
-        userName: "insert",
-        password: "123456",
-        recruitmentDate: "2019-01-01"
-      }
-    });
-
-    return {
-      userData,
-      userLoading
-    };
-  };
-
+  /* Parámetros para el componente Form */
   let params = [
     {
       key: "name",
@@ -85,7 +74,32 @@ function Users() {
   ];
   let structure = new StructureForm(params);
 
+  /* Conjunto de acciones para los rows del datatable */
   const actions = [<Button label={"Aceptar"} type={"default"} />];
+
+  const getResponse = data => {
+    console.log(data);
+  };
+
+  useEffect(() => {
+    console.log({ error: error, message: errorMessage });
+  }, [error]);
+
+  useEffect(() => {
+    console.log(status);
+    if (status.error) {
+      console.log(status.error);
+      setErrorMessage(status.response);
+      setError(true);
+    }
+  }, [status.loading]);
+
+  useEffect(() => {
+    if (roles.error) {
+      setErrorMessage(roles.response);
+      setError(true);
+    }
+  }, [roles.loading]);
 
   return (
     <div>
@@ -95,9 +109,9 @@ function Users() {
           fontSize="h5.fontSize"
           className={classes.Box}
         >
-          Crear Usuario
+          {"Crear Usuario: " + (status.loading || roles.loading || error)}
         </Box>
-        {statusLoading || rolLoading ? (
+        {status.loading || roles.loading || error ? (
           <Loader />
         ) : (
           <Form
@@ -110,25 +124,25 @@ function Users() {
             }
             submitLabel={"continuar"}
             submitType={"accented"}
-            getResponse={getResponse}
-            // setLoading={loading}
-            // setResponse={setResponse}
+            submitIcon={
+              <Save className={clsx(classes.leftIcon, classes.smallIcon)} />
+            }
             modalActions={actions}
+            getResponse={getResponse}
           >
             <Textbox label={"Nombre"} name={"name"} />
             <Textbox label={"Usuario"} name={"username"} />
             <Textbox label={"Email"} name={"email"} />
             <Textbox label={"Contraseña"} name={"password"} type="password" />
             <Combobox
-              options={statusData.status.map(status => {
+              options={status.response.status.map(status => {
                 return { name: status.statusName, id: status.statusId };
               })}
               title={"Status"}
               name={"statusId"}
             />
             <Combobox
-              data={rolData.roles}
-              options={rolData.roles.map(rol => {
+              options={roles.response.roles.map(rol => {
                 return { name: rol.rolName, id: rol.rolId };
               })}
               title={"Rol"}
@@ -146,6 +160,13 @@ function Users() {
           config={{ rowsPerPageArray: [10, 20], defaultSort: "desc" }}
         />
       </Container>
+      {/* <SnackbarComponent
+        type={"error"}
+        text={errorMessage}
+        open={error}
+        vertical={"bottom"}
+        horizontal={"left"}
+      /> */}
     </div>
   );
 }

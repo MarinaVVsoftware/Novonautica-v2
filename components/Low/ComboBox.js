@@ -46,9 +46,9 @@ const useStyles = makeStyles(theme => ({
 /**
  * @param {array} options Array con todas las opciones. necesita recibir un objeto tipo {name, id}
  * para devolver correctamente el id del objeto
- * @param {string} title Titulo para el label de arriba
+ * @param {string} title Título para el label de arriba
  * @param {string} name Nombre del combobox
- * @param {func} comboBoxValue Funcion para que el padre recupere el objecto actual
+ * @param {func} handleValue Función para que el padre recupere el objecto actual
  * @param {bool} disabled Deshabilita el combobox
  * @param {bool} restart Resetea el combobox
  */
@@ -61,12 +61,12 @@ function Combobox(props) {
   };
 
   useEffect(() => {
-    props.comboBoxValue(props.name, findId(value));
+    props.handleValue(props.name, findId(value));
   }, [value]);
 
   useEffect(() => {
     setValue(props.options[0].name);
-    props.comboBoxValue(props.name, findId(props.options[0].name));
+    props.handleValue(props.name, findId(props.options[0].name));
   }, [props.restart]);
 
   /* Dado que las API's requieren id's y no strings, dentro de "options" 
@@ -116,7 +116,7 @@ Combobox.propType = {
   options: PropTypes.array.isRequired,
   title: PropTypes.string.isRequired,
   name: PropTypes.string.isRequired,
-  comboBoxValue: PropTypes.func.isRequired,
+  handleValue: PropTypes.func.isRequired,
   disabled: PropTypes.bool
 };
 
