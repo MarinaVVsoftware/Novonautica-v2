@@ -6,9 +6,11 @@ let actionHandler = {
 
 export let users = {
   modifyUser: function(array) {
+    // hacer el fetch aqui
     console.log(array);
   },
   deleteUser: function(array) {
+    // hacer el fetch aqui
     console.log(array);
   }
 };
