@@ -55,15 +55,13 @@ function Users(props) {
     }
   ];
   let structure = new StructureForm(params);
-
   const getResponse = data => {
     console.log(data);
   };
-
   const actions = [<Button label={"Aceptar"} type={"default"} />];
 
-  return (
-    <div>
+  const UsersForm = () => {
+    return permissions.includes("CrearUsuario") ? (
       <Container>
         <Box
           fontWeight="fontWeightRegular"
@@ -99,6 +97,13 @@ function Users(props) {
           </Form>
         )}
       </Container>
+    ) : (
+      ""
+    );
+  };
+
+  const UsersTable = () => {
+    return permissions.includes("VerUsuarios") ? (
       <Container>
         {usersLoading ? (
           <Loader />
@@ -113,6 +118,15 @@ function Users(props) {
           />
         )}
       </Container>
+    ) : (
+      ""
+    );
+  };
+
+  return (
+    <div>
+      {UsersForm()}
+      {UsersTable()}
     </div>
   );
 }
