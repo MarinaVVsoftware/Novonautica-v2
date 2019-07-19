@@ -49,8 +49,6 @@ function DashBoardComponent(props) {
     });
   }
 
-  console.log(props.menu);
-
   return (
     <div className={classes.root}>
       <CssBaseline />

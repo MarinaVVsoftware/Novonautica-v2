@@ -60,7 +60,7 @@ function Users(props) {
   };
   const actions = [<Button label={"Aceptar"} type={"default"} />];
 
-  const UsersForm = () => {
+  const RenderUsersForm = () => {
     return permissions.includes("CrearUsuario") ? (
       <Container>
         <Box
@@ -102,7 +102,18 @@ function Users(props) {
     );
   };
 
-  const UsersTable = () => {
+  const usersActionTable = () => {
+    const actions = [];
+    if (permissions.includes("ModificarUsuario")) {
+      actions.push(["modifyUser", "Modificar Usuario"]);
+    }
+    if (permissions.includes("EliminarUsuario")) {
+      actions.push(["deleteUser", "Eliminar Usuario"]);
+    }
+    return actions;
+  };
+
+  const RenderUsersTable = () => {
     return permissions.includes("VerUsuarios") ? (
       <Container>
         {usersLoading ? (
@@ -111,6 +122,11 @@ function Users(props) {
           <DataTable
             data={usersData.users}
             title="Lista de Usuarios"
+            actions={
+              usersActionTable().length > 0
+                ? { list: usersActionTable(), set: users }
+                : null
+            }
             config={{
               rowsPerPage: usersData.users.length,
               defaultSort: "desc"
@@ -125,8 +141,8 @@ function Users(props) {
 
   return (
     <div>
-      {UsersForm()}
-      {UsersTable()}
+      {RenderUsersForm()}
+      {RenderUsersTable()}
     </div>
   );
 }

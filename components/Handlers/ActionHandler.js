@@ -5,7 +5,10 @@ let actionHandler = {
 };
 
 export let users = {
-  createUser: function(array) {
+  modifyUser: function(array) {
+    console.log(array);
+  },
+  deleteUser: function(array) {
     console.log(array);
   }
 };

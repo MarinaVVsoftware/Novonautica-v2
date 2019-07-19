@@ -77,6 +77,9 @@ function DataTable(props) {
     columns.forEach(element => {
       formattedColumns.push([element, prettifyCamelCase(element)]);
     });
+    if (props.actions) {
+      formattedColumns.push(["options", "Opciones"]);
+    }
 
     return formattedColumns;
   }
