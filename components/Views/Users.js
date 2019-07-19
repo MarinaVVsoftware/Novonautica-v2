@@ -36,7 +36,7 @@ function Users() {
   const classes = useStyles();
   const [error, setError] = useState(false);
   const [errorMessage, setErrorMessage] = useState(null);
-  const status = useFetch("/api/users/statuses/", "GET");
+  const status = useFetch("/api/users/status/", "GET");
   const roles = useFetch("/api/users/roles/", "GET");
 
   /* Parámetros para el componente Form */
@@ -77,29 +77,28 @@ function Users() {
   /* Conjunto de acciones para los rows del datatable */
   const actions = [<Button label={"Aceptar"} type={"default"} />];
 
+  /* Revisan los errores de los fetch GET */
+  useEffect(() => {
+    setError(status.error);
+    setErrorMessage(status.response);
+  }, [status.error]);
+
+  useEffect(() => {
+    setError(roles.error);
+    setErrorMessage(roles.response);
+  }, [roles.error]);
+
+  /* Obtiene los datos, los manipula, y se los devuelve al form como los params
+  para hacer el fetch */
   const getResponse = data => {
-    console.log(data);
+    // data.recruitmentDate = "2019-01-01";
+
+    return {
+      url: "/api/users/" + data.username,
+      method: "PUT",
+      body: { user: data }
+    };
   };
-
-  useEffect(() => {
-    console.log({ error: error, message: errorMessage });
-  }, [error]);
-
-  useEffect(() => {
-    console.log(status);
-    if (status.error) {
-      console.log(status.error);
-      setErrorMessage(status.response);
-      setError(true);
-    }
-  }, [status.loading]);
-
-  useEffect(() => {
-    if (roles.error) {
-      setErrorMessage(roles.response);
-      setError(true);
-    }
-  }, [roles.loading]);
 
   return (
     <div>
@@ -109,7 +108,7 @@ function Users() {
           fontSize="h5.fontSize"
           className={classes.Box}
         >
-          {"Crear Usuario: " + (status.loading || roles.loading || error)}
+          Crear Usuario:
         </Box>
         {status.loading || roles.loading || error ? (
           <Loader />
@@ -160,13 +159,13 @@ function Users() {
           config={{ rowsPerPageArray: [10, 20], defaultSort: "desc" }}
         />
       </Container>
-      {/* <SnackbarComponent
+      <SnackbarComponent
         type={"error"}
         text={errorMessage}
         open={error}
         vertical={"bottom"}
         horizontal={"left"}
-      /> */}
+      />
     </div>
   );
 }

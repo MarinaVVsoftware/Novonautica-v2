@@ -4,6 +4,7 @@ import { makeStyles } from "@material-ui/styles";
 import Grid from "@material-ui/core/Grid";
 import Button from "../../Low/Button";
 import Modal from "../Modal";
+import SnackbarComponent from "../../Low/Snackbar";
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -29,7 +30,6 @@ const useStyles = makeStyles(theme => ({
  * @param {Element} submitIcon Icono para el botón.
  * @param {Elements} modalActions Conjunto de botones a renderear como Actions del modal.
  * @param {function} getResponse Función que obtiene la respuesta del submit.
- * @param {string} fetchError String que contiene el error de los fetch get iniciales que haga el form.
  * @param {Elements} children Conjunto de formularios a renderear dentro del form.
  */
 function FormComponent(props) {
@@ -38,6 +38,7 @@ function FormComponent(props) {
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
   const [failed, setFailed] = useState(false);
+  const [errorMessage, setErrorMessage] = useState(null);
   const [comboboxReset, setComboboxReset] = useState(false);
   const [click, setClick] = useState(false);
   const [dialog, setDialog] = useState(false);
@@ -149,8 +150,7 @@ function FormComponent(props) {
       }
     });
 
-    if (status) GetData();
-    else setFailed(true);
+    if (!status) setFailed(true);
 
     // marca un click en el botón para hacer trigger de eventos
     setClick(!click);
@@ -182,9 +182,17 @@ function FormComponent(props) {
     setSuccess(false);
   };
 
-  /* Handler del click del botón del form */
+  /* Handler del click del botón del form. Le regresa al botón si
+  la validación fue true o false, y en caso de true le regresa todo
+  el objeto para hacer fetch */
   const HandleButtonClick = () => {
-    return IsFormValid();
+    const valid = IsFormValid();
+
+    if (valid) {
+      const data = GetData();
+
+      return { valid: valid, data: data };
+    } else return { valid: valid, data: null };
   };
 
   /* Handler para abrir el diálogo de confirmación */
@@ -208,8 +216,17 @@ function FormComponent(props) {
       data[fieldName] = structure[fieldName].state;
     });
 
-    props.getResponse(data);
+    return props.getResponse(data);
   };
+
+  /* Setea el error obtenido por el botón submit */
+  const SetError = error => {
+    setFailed(true);
+    setErrorMessage(error);
+  };
+
+  /* Limpia el estado del error. Lo maneja el snackbar */
+  const CleanError = () => setFailed(false);
 
   /* Ejecuta la inyección de los props a cada control antes de su render.
   Esta función debe ir hasta abajo antes del render. Se ejecuta aquí. */
@@ -250,6 +267,15 @@ function FormComponent(props) {
         success={success}
         failed={failed}
         icon={submitIcon}
+        setError={SetError}
+      />
+      <SnackbarComponent
+        type={"error"}
+        text={errorMessage}
+        open={failed}
+        onClose={CleanError}
+        vertical={"bottom"}
+        horizontal={"left"}
       />
     </React.Fragment>
   );

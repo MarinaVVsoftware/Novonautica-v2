@@ -32,17 +32,16 @@ function useFetch(url, method, body) {
 
         /* Obliga a setear los valores en el orden y momento correcto.
         Sin este if se producen errores de async indeseados. */
-        if (response.ok) {
+        if (response.ok && response.status < 399) {
           setStatusCode(response.status);
           setResponse(json);
           setLoading(false);
         } else if (response.status) {
           setStatusCode(response.status);
           if (response.status > 400) {
-            console.log("su puta madre");
             setResponse("La API ha fallado. Contacte a soporte.");
-          } else setResponse(json);
-          setError(true);
+            setError(true);
+          }
         }
       } catch (error) {
         console.log(error);

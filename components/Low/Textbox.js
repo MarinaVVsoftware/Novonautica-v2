@@ -136,7 +136,8 @@ function Textbox(props) {
         className={classes.formControl}
         disabled={props.disabled}
         error={!valid}
-        required={props.required}>
+        required={props.required}
+      >
         {/* Label en la parte superior del textbox, aqui se anuncia el nombre del textbox */}
         <InputLabel
           classes={{ focused: classes.labelFocused, root: classes.inputLabel }}
@@ -166,10 +167,8 @@ function Textbox(props) {
       {valid ? (
         ""
       ) : (
-        <FormHelperText className={classes.FormHelperText}>
-          <Label variant={"helperText"} gutterBottom={true}>
-            {errorLabel}
-          </Label>
+        <FormHelperText className={classes.FormHelperText} error>
+          {errorLabel}
         </FormHelperText>
       )}
     </div>
