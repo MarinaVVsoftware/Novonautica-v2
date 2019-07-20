@@ -44,7 +44,7 @@ function DashBoardComponent(props) {
   }
 
   function actualModule() {
-    return React.cloneElement(ModuleHandler[module], {
+    return React.cloneElement(props.children, {
       permissions: props.menu
     });
   }
