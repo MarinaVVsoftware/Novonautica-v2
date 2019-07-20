@@ -1,11 +1,11 @@
-import React, { useState, useRef } from "react";
-import clsx from "clsx"; // Sirve igual que classnames para la concatenación de clases
+import React, { useState, useEffect, useRef } from "react";
 import PropTypes from "prop-types";
 import { makeStyles } from "@material-ui/styles";
 import Grid from "@material-ui/core/Grid";
 import Button from "../../Low/Button";
-import Save from "@material-ui/icons/Save";
 import Modal from "../Modal";
+import SnackbarComponent from "../../Low/Snackbar";
+import useFetch2 from "../../../helpers/useFetchPromised";
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -16,46 +16,54 @@ const useStyles = makeStyles(theme => ({
   gridList: {
     width: "100%",
     backgroundColor: "#212121"
-  },
-  leftIcon: {
-    marginRight: theme.spacing(1),
-    marginBottom: "3px"
-  },
-  smallIcon: {
-    fontSize: 20
   }
 }));
 
 /** Componente que controla todos los controles en un único lugar "form".
  * Contiene todos los algoritmos para procesar los errores y validaciones.
  * @param {Object} structure Objeto tipo "ScructureForm" con las reglas de forms.
- * @param {Elements} children Conjunto de formularios a renderear dentro del form.
- * @param {function} getResponse Función que obtiene la respuesta del submit.
  * @param {string} modalTitle Titulo del modal.
  * @param {string} modalDescription Descripción dentro del modal.
- * @param {Elements} modalActions Conjunto de botones a renderear como Actions del modal.
+ * @param {string} modalTitleError Titulo del modal en caso de que el fetch retorne error.
+ * @param {string} modalDescriptionError Descripción dentro del modal en caso que el fetch retorne error.
  * @param {string} submitLabel Texto del botón submit.
  * @param {string} submitType Tipo del botón.
+ * @param {Element} submitIcon Icono para el botón.
+ * @param {Elements} modalActions Conjunto de botones a renderear como Actions del modal.
+ * @param {function} getResponse Función que obtiene la respuesta del submit.
+ * @param {Elements} children Conjunto de formularios a renderear dentro del form.
  */
 function FormComponent(props) {
   const classes = useStyles();
   const [structure] = useState(props.structure);
+  const [loading, setLoading] = useState(false);
+  const [success, setSuccess] = useState(false);
+  const [failed, setFailed] = useState(false);
+  const [errorMessage, setErrorMessage] = useState(null);
+  const [comboboxReset, setComboboxReset] = useState(false);
   const [click, setClick] = useState(false);
   const [dialog, setDialog] = useState(false);
+  const [fetchData, setFetchData] = useState({ code: null, response: null });
   let inputs = props.children;
   let actions = props.modalActions;
+  let submitIcon = props.submitIcon;
+
+  /* Escucha activa por la respuesta del fetch */
+  useEffect(() => {
+    if (fetchData.code != null) ProcessFetchResult();
+  }, [fetchData]);
 
   /* función que se encarga del algoritmo para inyectar 
   los handlers a cada componente */
   const InyectProps = () => {
     inputs = inputs.map((input, index) => {
-      /* Mediante un switch  hace una inyección diferente de props por cada
-	tipo de componente rendereable. */
+      /* Mediante un switch  hace una inyección diferente de props 
+      por cada tipo de componente rendereable. */
       switch (input.type.name) {
         case "Textbox":
           return React.cloneElement(input, {
             key: index,
-            handleValue: HandlerValue,
+            handleValue: HandleTextboxValue,
             handleValid: HandleValid,
             handleErrors: HandleErrors,
             click: click,
@@ -64,15 +72,15 @@ function FormComponent(props) {
         case "Combobox":
           return React.cloneElement(input, {
             key: index,
-            comboBoxValue: HandleComboboxValue
+            handleValue: HandleComboboxValue,
+            restart: comboboxReset
           });
-
-        default:
-          break;
       }
     });
   };
 
+  /* Crea los botones dentro del dialog y les inyecta props
+  para ser manejado por el form */
   const CreateActions = () => {
     actions = actions.map((input, index) => {
       return React.cloneElement(input, {
@@ -82,12 +90,21 @@ function FormComponent(props) {
     });
   };
 
-  /* Actualiza un control con su valor. Resetea los errores y su validez. */
-  const HandlerValue = (fieldName, value) => {
+  /* Actualiza un control con su valor. 
+  Resetea los errores y su validez. */
+  const HandleTextboxValue = (fieldName, value) => {
+    setLoading(false);
+    setFailed(false);
+    setSuccess(false);
     structure[fieldName].errors = [];
     structure[fieldName].state = value;
     structure[fieldName].valid = true;
     ValidateControl(fieldName, value);
+  };
+
+  /* Obtiene el valor del combobox y lo devuelve. */
+  const HandleComboboxValue = (fieldName, value) => {
+    structure[fieldName].state = value;
   };
 
   /* Handler del estatus "valid" del control */
@@ -98,27 +115,6 @@ function FormComponent(props) {
   /* Handler de los strings de errores */
   const HandleErrors = fieldName => {
     return structure[fieldName].errors;
-  };
-
-  /* Handler del click del botón del form */
-  const HandleButtonClick = () => {
-    return IsFormValid();
-  };
-
-  /* Obtiene el valor del combobox y lo devuelve. */
-  const HandleComboboxValue = (fieldName, value) => {
-    structure[fieldName].state = value.option;
-  };
-
-  /* Handler para abrir el diálogo de confirmación */
-  const OpenDialog = () => {
-    setDialog(true);
-  };
-
-  /* Handler para cerrar el díalogo. Limpia el formulario. */
-  const CloseDialog = () => {
-    setDialog(false);
-    ResetAllControls();
   };
 
   /* Toma las reglas de validación del control a validar
@@ -144,6 +140,31 @@ function FormComponent(props) {
     }
   };
 
+  /* obtiene un arreglo de las keys principales de la estructura,
+  y los usa para iterar toda la estructura y limpiarla. */
+  const ResetAllControls = () => {
+    Object.keys(structure).forEach(fieldName => {
+      switch (structure[fieldName].type) {
+        case "Textbox":
+          structure[fieldName].errors = [];
+          structure[fieldName].state = "";
+          structure[fieldName].valid = true;
+          break;
+        case "Combobox":
+          setComboboxReset(!comboboxReset);
+          break;
+        default:
+          structure[fieldName].errors = [];
+          structure[fieldName].valid = true;
+          break;
+      }
+    });
+
+    setLoading(false);
+    setFailed(false);
+    setSuccess(false);
+  };
+
   /* Revisa todos los controles de la estructura por alguno que no sea válido */
   const IsFormValid = () => {
     let status = true;
@@ -161,21 +182,11 @@ function FormComponent(props) {
       }
     });
 
-    if (status) GetData();
+    if (!status) setFailed(true);
 
     // marca un click en el botón para hacer trigger de eventos
     setClick(!click);
     return status;
-  };
-
-  /* obtiene un arreglo de las keys principales de la estructura,
-  y los usa para iterar toda la estructura y limpiarla. */
-  const ResetAllControls = () => {
-    Object.keys(structure).forEach(fieldName => {
-      structure[fieldName].errors = [];
-      structure[fieldName].state = "";
-      structure[fieldName].valid = true;
-    });
   };
 
   /* Método que se encarga de obtener los valores 
@@ -186,11 +197,100 @@ function FormComponent(props) {
       data[fieldName] = structure[fieldName].state;
     });
 
-    props.getResponse(data);
+    return props.getResponse(data);
   };
 
-  // Ejecuta la inyección de los props a cada control antes de su render.
-  // esta función debe ir hasta abajo antes del render. Se ejecuta ahí.
+  /* Si la validación es true, se hace el fetch del submit y se setea el resultado */
+  const FetchSubmit = formData => {
+    let code = null;
+
+    useFetch2(formData.url, formData.method, formData.body)
+      .then(res => {
+        code = res.status;
+        /* Por alguna razón truena la app cuando el response viene vacío,
+          este if lo maneja para evitar errores */
+        if (res.status < 201 || res.status > 299) return res.json();
+        else return null;
+      })
+      .then(response => setFetchData({ code: code, response: response }))
+      .catch(error => {
+        setFetchData({ code: 500, response: { error: error } });
+      });
+  };
+
+  /* Handler del click del botón del form. */
+  const HandleButtonClick = () => {
+    const valid = IsFormValid();
+
+    if (valid) {
+      setLoading(true);
+      FetchSubmit(GetData());
+    } else {
+      setFailed(true);
+      setErrorMessage("Datos inválidos. Revise los datos ingresados.");
+    }
+  };
+
+  /* obtiene la respuesta del fetch hecha por el botón y procesa el contenido
+  para validar errores y respuestas */
+  const ProcessFetchResult = () => {
+    setLoading(false);
+
+    switch (fetchData.code) {
+      case 200:
+      case 201:
+      case 202:
+      case 204:
+        setSuccess(true);
+        OpenDialog();
+        break;
+      case 400:
+        setFailed(true);
+        setErrorMessage(fetchData.response.error);
+        break;
+      case 401:
+        setFailed(true);
+        setErrorMessage("Acceso no autorizado. Contacte a soporte.");
+        break;
+      case 403:
+      case 404:
+      case 405:
+        setFailed(true);
+        setErrorMessage(
+          "Novocore ha rechazado la request. Contacte a soporte."
+        );
+        break;
+      case 406:
+        setFailed(true);
+        setErrorMessage(
+          "No se enviaron los datos correctamente. Contacte a soporte."
+        );
+        break;
+      default:
+        setFailed(true);
+        setErrorMessage("Algo ha fallado en novonautica. Contacte a soporte.");
+        break;
+    }
+  };
+
+  /* Limpia el estado del error. Lo maneja el snackbar */
+  const CleanError = () => setFailed(false);
+
+  /* Handler para abrir el diálogo de confirmación */
+  const OpenDialog = () => {
+    setDialog(true);
+    setLoading(false);
+    setSuccess(true);
+  };
+
+  /* Handler para cerrar el díalogo. Limpia el formulario. */
+  const CloseDialog = () => {
+    setDialog(false);
+    ResetAllControls();
+  };
+
+  /* Ejecuta la inyección de los props a cada control antes de su render.
+  Esta función debe ir hasta abajo antes del render. Se ejecuta aquí. */
   InyectProps();
   CreateActions();
 
@@ -200,8 +300,11 @@ function FormComponent(props) {
       <Modal
         open={dialog}
         onClose={CloseDialog}
-        title={props.modalTitle} /* MODIFICARLOS */
-        description={props.modalDescription}>
+        title={!failed ? props.modalTitle : props.modalTitleError}
+        description={
+          !failed ? props.modalDescription : props.modalDescriptionError
+        }
+      >
         {actions}
       </Modal>
       <div className={classes.root}>
@@ -217,11 +320,21 @@ function FormComponent(props) {
       {/* Button Submit */}
       <Button
         label={props.submitLabel}
-        submitClick={HandleButtonClick}
-        openDialog={OpenDialog}
+        handleButtonClick={HandleButtonClick}
         dialog={dialog}
         type={props.submitType}
-        icon={<Save className={clsx(classes.leftIcon, classes.smallIcon)} />}
+        loading={loading}
+        success={success}
+        failed={failed}
+        icon={submitIcon}
+      />
+      <SnackbarComponent
+        type={"error"}
+        text={errorMessage}
+        open={failed}
+        onClose={CleanError}
+        vertical={"bottom"}
+        horizontal={"left"}
       />
     </React.Fragment>
   );

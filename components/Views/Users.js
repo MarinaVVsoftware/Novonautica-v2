@@ -14,51 +14,91 @@ import { users } from "../Handlers/ActionHandler";
 import Router from "next/router";
 import useFetch from "../../helpers/useFetch";
 import getPermissions from "../../helpers/getPermissions";
+import clsx from "clsx";
+import Save from "@material-ui/icons/Save";
+import SnackbarComponent from "../Low/Snackbar";
 
 const useStyles = makeStyles(theme => ({
   Box: {
     color: "#e7e7e7 !important",
     marginBottom: "20px"
+  },
+  leftIcon: {
+    marginRight: theme.spacing(1),
+    marginBottom: "3px"
+  },
+  smallIcon: {
+    fontSize: 20
   }
 }));
 
 function Users(props) {
   const classes = useStyles();
+  const [error, setError] = useState(false);
+  const [errorMessage, setErrorMessage] = useState(null);
   const permissions = getPermissions("RRHH", "Usuarios", props.permissions);
-  const [statusData, statusLoading] = useFetch("/api/users/status/", "GET");
-  const [rolData, rolLoading] = useFetch("/api/users/roles/", "GET");
-  const [usersData, usersLoading] = useFetch("/api/users/", "GET");
+  const status = useFetch("/api/users/status/", "GET");
+  const roles = useFetch("/api/users/roles/", "GET");
+
   let params = [
     {
-      key: "nombre",
+      key: "name",
+      type: "Textbox",
       rules: rulesTypes.basicString
     },
     {
-      key: "usuario",
+      key: "username",
+      type: "Textbox",
       rules: rulesTypes.basicString
     },
     {
       key: "email",
+      type: "Textbox",
       rules: rulesTypes.email
     },
     {
       key: "password",
+      type: "Textbox",
       rules: rulesTypes.password
     },
     {
-      key: "status",
+      key: "statusId",
+      type: "Combobox",
       rules: null
     },
     {
-      key: "rol",
+      key: "rolId",
+      type: "Combobox",
       rules: null
     }
   ];
   let structure = new StructureForm(params);
-  const getResponse = data => {
-    console.log(data);
-  };
+
+  /* Conjunto de acciones para los rows del datatable */
   const actions = [<Button label={"Aceptar"} type={"default"} />];
+
+  /* Revisan los errores de los fetch GET */
+  useEffect(() => {
+    setError(status.error);
+    setErrorMessage(status.response);
+  }, [status.error]);
+
+  useEffect(() => {
+    setError(roles.error);
+    setErrorMessage(roles.response);
+  }, [roles.error]);
+
+  /* Obtiene los datos, los manipula, y se los devuelve al form como los params
+  para hacer el fetch */
+  const getResponse = data => {
+    data.recruitmentDate = "2019-01-01";
+
+    return {
+      url: "/api/users/" + data.username,
+      method: "PUT",
+      body: { user: data }
+    };
+  };
 
   const RenderUsersForm = () => {
     return permissions.includes("CrearUsuario") ? (
@@ -66,33 +106,46 @@ function Users(props) {
         <Box
           fontWeight="fontWeightRegular"
           fontSize="h5.fontSize"
-          className={classes.Box}>
-          Crear Usuario
+          className={classes.Box}
+        >
+          Crear Usuario:
         </Box>
-        {statusLoading || rolLoading ? (
+        {status.loading || roles.loading || error ? (
           <Loader />
         ) : (
           <Form
             structure={structure}
             modalTitle={"Crear Usuario"}
             modalDescription={"El usuario se ha creado exitosamente."}
-            submitLabel={"guardar"}
+            modalTitleError={"Crear Usuario: error"}
+            modalDescriptionError={
+              "La creación del usuario ha fallado. Contacte con soporte."
+            }
+            submitLabel={"continuar"}
             submitType={"accented"}
+            submitIcon={
+              <Save className={clsx(classes.leftIcon, classes.smallIcon)} />
+            }
+            modalActions={actions}
             getResponse={getResponse}
-            modalActions={actions}>
-            <Textbox label={"Nombre"} name={"nombre"} />
-            <Textbox label={"Usuario"} name={"usuario"} />
+          >
+            <Textbox label={"Nombre"} name={"name"} />
+            <Textbox label={"Usuario"} name={"username"} />
             <Textbox label={"Email"} name={"email"} />
             <Textbox label={"Contraseña"} name={"password"} type="password" />
             <Combobox
-              options={statusData.status.map(status => status.statusName)}
+              options={status.response.status.map(status => {
+                return { name: status.statusName, id: status.statusId };
+              })}
               title={"Status"}
-              name={"status"}
+              name={"statusId"}
             />
             <Combobox
-              options={rolData.roles.map(rol => rol.rolName)}
+              options={roles.response.roles.map(rol => {
+                return { name: rol.rolName, id: rol.rolId };
+              })}
               title={"Rol"}
-              name={"rol"}
+              name={"rolId"}
             />
           </Form>
         )}
@@ -143,6 +196,13 @@ function Users(props) {
     <div>
       {RenderUsersForm()}
       {RenderUsersTable()}
+      <SnackbarComponent
+        type={"error"}
+        text={errorMessage}
+        open={error}
+        vertical={"bottom"}
+        horizontal={"left"}
+      />
     </div>
   );
 }
