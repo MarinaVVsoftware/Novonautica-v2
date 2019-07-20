@@ -25,6 +25,7 @@ class MyApp extends App {
   }
 
   static async getInitialProps(config) {
+    // How getInitialProps works: https://medium.com/@griko/exploring-undocumented-getinitialprops-properties-on-next-js-1265a6abc652
     const { Component, ctx } = config;
     let pageProps = {};
     let data = {};
