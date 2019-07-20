@@ -91,7 +91,7 @@ function Users() {
   /* Obtiene los datos, los manipula, y se los devuelve al form como los params
   para hacer el fetch */
   const getResponse = data => {
-    // data.recruitmentDate = "2019-01-01";
+    data.recruitmentDate = "2019-01-01";
 
     return {
       url: "/api/users/" + data.username,

@@ -1,6 +1,5 @@
 import { Fragment, useState, useEffect, Component } from "react";
 import classNames from "classnames";
-import PropTypes from "prop-types";
 import { makeStyles } from "@material-ui/styles";
 import { Button, Fab, CircularProgress } from "@material-ui/core";
 import { green, red } from "@material-ui/core/colors";
@@ -8,8 +7,6 @@ import { green, red } from "@material-ui/core/colors";
 import CheckIcon from "@material-ui/icons/Check";
 import ErrorIcon from "@material-ui/icons/ErrorOutline";
 import AddIcon from "@material-ui/icons/Add";
-import fetch from "isomorphic-fetch";
-import useFetch2 from "../../helpers/useFetch2";
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -136,9 +133,7 @@ const useStyles = makeStyles(theme => ({
  * todas las diferentes configuraciones nativas de Material-UI/Button.
  * @param {string} label Texto que se muestra en el botón.
  * @param {function} onClick Evento para ejecutar un botón sin estados.
- * @param {boolean} submitClick Evento que ejecuta las animaciones de loading success y error.
- * @param {function} openDialog Evento que ejecuta abrir el modal asociado el boton submit.
- * @param {function} setError función del form padre que recibe los datos del error y salta el snackbar
+ * @param {function} handleButtonClick Evento que ejecuta las animaciones de loading success y error.
  * @param {boolean} dialog Necesita escuchar el estado de dialog para cambiar su estado a la par.
  * @param {boolean} loading Si es true, carga un progress y deshabilita el botón, de lo contrario muestra texto.
  * @param {boolean} success Si es true, el botón muestra la animación de success.
@@ -156,7 +151,6 @@ function ButtonComponent(props) {
   const [success, setSuccess] = useState(false);
   const [failed, setFailed] = useState(false);
   const [disabled, setDisabled] = useState(false);
-  const [fetchData, setFetchData] = useState(null);
 
   const buttonClassname = classNames({
     [classes.buttonSuccess]: success,
@@ -198,60 +192,15 @@ function ButtonComponent(props) {
   useEffect(() => {
     setDisabled(props.disabled);
   }, [props.disabled]);
-  useEffect(() => {
-    if (fetchData != null) {
-      /* En caso de que el response tenga un objeto error,
-      alerta al form padre y resuelve el error */
-      if (fetchData.error) {
-        setLoading(false);
-        setSuccess(false);
-        setFailed(true);
-        props.setError("Ha ocurrido un error. Intente de nuevo.");
-        console.error(fetchData.error);
-      } else {
-        setLoading(false);
-        setSuccess(true);
-        setFailed(false);
-        props.openDialog();
-      }
-    }
-  }, [fetchData]);
 
-  /*  Maneja el código de cuando se ejecute el evento onClick */
-  const HandleClick = () => {
+  /*  Maneja el evento onClick */
+  const HandleButtonClick = () => {
     if (props.onClick) {
       props.onClick();
     }
-    if (props.submitClick) {
-      const submitData = props.submitClick();
 
-      if (submitData.valid) {
-        setLoading(true);
-
-        useFetch2(
-          submitData.data.url,
-          submitData.data.method,
-          submitData.data.body
-        )
-          .then(res => {
-            console.log(res);
-            if (res.status < 201 || res.status > 299) return res.json();
-            else return null;
-          })
-          .then(response => {
-            console.log(response);
-            if (response != null) setFetchData(response);
-            else setFetchData("");
-          })
-          .catch(error => {
-            setFetchData({ error: error });
-          });
-      } else {
-        setFetchData({
-          error: "El formulario tiene datos inválidos. Intente de nuevo."
-        });
-      }
-    }
+    /* El componente form padre es quien decide el estado del botón al hacer click */
+    if (props.handleButtonClick) props.handleButtonClick();
   };
 
   /* Escucha activa por el dialog para limpiar los estados del submit button */
@@ -260,7 +209,6 @@ function ButtonComponent(props) {
       setLoading(false);
       setSuccess(false);
       setFailed(false);
-      setFetchData(null);
     }
   }, [props.dialog]);
 
@@ -282,7 +230,7 @@ function ButtonComponent(props) {
           ? { label: classes.labelError }
           : { disabled: classes.disabled }
       }
-      onClick={() => HandleClick()}
+      onClick={() => HandleButtonClick()}
     >
       {props.icon && !props.variant ? props.icon : ""}
       {props.label}

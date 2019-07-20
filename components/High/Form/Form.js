@@ -1,10 +1,11 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import PropTypes from "prop-types";
 import { makeStyles } from "@material-ui/styles";
 import Grid from "@material-ui/core/Grid";
 import Button from "../../Low/Button";
 import Modal from "../Modal";
 import SnackbarComponent from "../../Low/Snackbar";
+import useFetch2 from "../../../helpers/useFetchPromised";
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -42,9 +43,15 @@ function FormComponent(props) {
   const [comboboxReset, setComboboxReset] = useState(false);
   const [click, setClick] = useState(false);
   const [dialog, setDialog] = useState(false);
+  const [fetchData, setFetchData] = useState({ code: null, response: null });
   let inputs = props.children;
   let actions = props.modalActions;
   let submitIcon = props.submitIcon;
+
+  /* Escucha activa por la respuesta del fetch */
+  useEffect(() => {
+    if (fetchData.code != null) ProcessFetchResult();
+  }, [fetchData]);
 
   /* función que se encarga del algoritmo para inyectar 
   los handlers a cada componente */
@@ -133,30 +140,6 @@ function FormComponent(props) {
     }
   };
 
-  /* Revisa todos los controles de la estructura por alguno que no sea válido */
-  const IsFormValid = () => {
-    let status = true;
-    Object.keys(structure).forEach(fieldName => {
-      // valida que si está vacío el control marque error
-      if (structure[fieldName].state == "") {
-        structure[fieldName].errors = [];
-        structure[fieldName].errors.push("field is empty");
-        structure[fieldName].valid = false;
-        status = false;
-      }
-      //si es inválido, setea falso
-      if (!structure[fieldName].valid) {
-        status = false;
-      }
-    });
-
-    if (!status) setFailed(true);
-
-    // marca un click en el botón para hacer trigger de eventos
-    setClick(!click);
-    return status;
-  };
-
   /* obtiene un arreglo de las keys principales de la estructura,
   y los usa para iterar toda la estructura y limpiarla. */
   const ResetAllControls = () => {
@@ -182,30 +165,28 @@ function FormComponent(props) {
     setSuccess(false);
   };
 
-  /* Handler del click del botón del form. Le regresa al botón si
-  la validación fue true o false, y en caso de true le regresa todo
-  el objeto para hacer fetch */
-  const HandleButtonClick = () => {
-    const valid = IsFormValid();
+  /* Revisa todos los controles de la estructura por alguno que no sea válido */
+  const IsFormValid = () => {
+    let status = true;
+    Object.keys(structure).forEach(fieldName => {
+      // valida que si está vacío el control marque error
+      if (structure[fieldName].state == "") {
+        structure[fieldName].errors = [];
+        structure[fieldName].errors.push("field is empty");
+        structure[fieldName].valid = false;
+        status = false;
+      }
+      //si es inválido, setea falso
+      if (!structure[fieldName].valid) {
+        status = false;
+      }
+    });
 
-    if (valid) {
-      const data = GetData();
+    if (!status) setFailed(true);
 
-      return { valid: valid, data: data };
-    } else return { valid: valid, data: null };
-  };
-
-  /* Handler para abrir el diálogo de confirmación */
-  const OpenDialog = () => {
-    setDialog(true);
-    setLoading(false);
-    setSuccess(true);
-  };
-
-  /* Handler para cerrar el díalogo. Limpia el formulario. */
-  const CloseDialog = () => {
-    setDialog(false);
-    ResetAllControls();
+    // marca un click en el botón para hacer trigger de eventos
+    setClick(!click);
+    return status;
   };
 
   /* Método que se encarga de obtener los valores 
@@ -219,14 +200,94 @@ function FormComponent(props) {
     return props.getResponse(data);
   };
 
-  /* Setea el error obtenido por el botón submit */
-  const SetError = error => {
-    setFailed(true);
-    setErrorMessage(error);
+  /* Si la validación es true, se hace el fetch del submit y se setea el resultado */
+  const FetchSubmit = formData => {
+    let code = null;
+
+    useFetch2(formData.url, formData.method, formData.body)
+      .then(res => {
+        code = res.status;
+        /* Por alguna razón truena la app cuando el response viene vacío,
+          este if lo maneja para evitar errores */
+        if (res.status < 201 || res.status > 299) return res.json();
+        else return null;
+      })
+      .then(response => setFetchData({ code: code, response: response }))
+      .catch(error => {
+        setFetchData({ code: 500, response: { error: error } });
+      });
+  };
+
+  /* Handler del click del botón del form. */
+  const HandleButtonClick = () => {
+    const valid = IsFormValid();
+
+    if (valid) {
+      setLoading(true);
+      FetchSubmit(GetData());
+    } else {
+      setFailed(true);
+      setErrorMessage("Datos inválidos. Revise los datos ingresados.");
+    }
+  };
+
+  /* obtiene la respuesta del fetch hecha por el botón y procesa el contenido
+  para validar errores y respuestas */
+  const ProcessFetchResult = () => {
+    setLoading(false);
+
+    switch (fetchData.code) {
+      case 200:
+      case 201:
+      case 202:
+      case 204:
+        setSuccess(true);
+        OpenDialog();
+        break;
+      case 400:
+        setFailed(true);
+        setErrorMessage(fetchData.response.error);
+        break;
+      case 401:
+        setFailed(true);
+        setErrorMessage("Acceso no autorizado. Contacte a soporte.");
+        break;
+      case 403:
+      case 404:
+      case 405:
+        setFailed(true);
+        setErrorMessage(
+          "Novocore ha rechazado la request. Contacte a soporte."
+        );
+        break;
+      case 406:
+        setFailed(true);
+        setErrorMessage(
+          "No se enviaron los datos correctamente. Contacte a soporte."
+        );
+        break;
+      default:
+        setFailed(true);
+        setErrorMessage("Algo ha fallado en novonautica. Contacte a soporte.");
+        break;
+    }
   };
 
   /* Limpia el estado del error. Lo maneja el snackbar */
   const CleanError = () => setFailed(false);
+
+  /* Handler para abrir el diálogo de confirmación */
+  const OpenDialog = () => {
+    setDialog(true);
+    setLoading(false);
+    setSuccess(true);
+  };
+
+  /* Handler para cerrar el díalogo. Limpia el formulario. */
+  const CloseDialog = () => {
+    setDialog(false);
+    ResetAllControls();
+  };
 
   /* Ejecuta la inyección de los props a cada control antes de su render.
   Esta función debe ir hasta abajo antes del render. Se ejecuta aquí. */
@@ -259,15 +320,13 @@ function FormComponent(props) {
       {/* Button Submit */}
       <Button
         label={props.submitLabel}
-        submitClick={HandleButtonClick}
-        openDialog={OpenDialog}
+        handleButtonClick={HandleButtonClick}
         dialog={dialog}
         type={props.submitType}
         loading={loading}
         success={success}
         failed={failed}
         icon={submitIcon}
-        setError={SetError}
       />
       <SnackbarComponent
         type={"error"}
