@@ -8,27 +8,10 @@ import Router from "next/router";
 import jsCookie from "js-cookie";
 
 function PageLogin(props) {
+  console.log(props);
   return <Login />;
 }
 
-PageLogin.getInitialProps = async ({ res, req }) => {
-  if (res) {
-    if (getSessionLength(req) >= 1) {
-      res.writeHead(302, {
-        Location: "/"
-      });
-      res.end();
-      return {};
-    }
-    return {};
-  } else {
-    if (jsCookie.get("token")) {
-      Router.push({
-        pathname: "/"
-      });
-      return {};
-    }
-    return {};
-  }
-};
+PageLogin.getInitialProps = async ({ res, req }) => {};
+
 export default PageLogin;
