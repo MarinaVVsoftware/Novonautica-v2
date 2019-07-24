@@ -2,16 +2,18 @@
 // --- Post bootstrap ---
 import React from "react";
 import "../src/global.css";
-import DashBoardComponent from "../components/Views/DashBoard";
+import DashBoard from "../components/Views/DashBoard";
 import Home from "../components/Views/Home";
-import getSession, { getSessionLength } from "../helpers/getSession";
-import jsCookie from "js-cookie";
-import Router from "next/router";
-import fetch from "isomorphic-fetch";
 
 function Index(props) {
-  console.log(props);
-  return null;
+  if (!props) return null;
+  return (
+    <DashBoard
+      name={props.data.user.username}
+      menu={JSON.parse(props.data.user.rol.permissions)}>
+      <Home />
+    </DashBoard>
+  );
 }
 
 Index.getInitialProps = async ({ res, req }) => {};

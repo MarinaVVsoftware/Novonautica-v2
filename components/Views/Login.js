@@ -84,7 +84,7 @@ function Login(props) {
       params.email = user;
       params.password = password;
       config.body = JSON.stringify(params);
-      fetch("https://authcore-dev.novonautica.com/api/auth/login", config)
+      fetch("http://localhost:8079/api/auth/login/", config)
         .then(response => response.json())
         .then(data => {
           if (data.error === null) {

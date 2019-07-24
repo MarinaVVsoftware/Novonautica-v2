@@ -67,10 +67,11 @@ class MyApp extends App {
       cookies.token = jsCookie.get("token");
       cookies.user = jsCookie.get("user");
     }
+
     params.headers.authorization = cookies.token;
     process.env.NODE_TLS_REJECT_UNAUTHORIZED;
     const initialReq = await fetch(
-      `https://novocore-dev.novonautica.com/api/users/manuel@mail.com`,
+      `https://novocore-dev.novonautica.com/api/users/${cookies.user}`,
       params
     );
     data = await initialReq.json();
