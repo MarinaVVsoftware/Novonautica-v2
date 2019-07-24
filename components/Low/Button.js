@@ -1,6 +1,5 @@
 import { Fragment, useState, useEffect, Component } from "react";
 import classNames from "classnames";
-import PropTypes from "prop-types";
 import { makeStyles } from "@material-ui/styles";
 import { Button, Fab, CircularProgress } from "@material-ui/core";
 import { green, red } from "@material-ui/core/colors";
@@ -134,8 +133,7 @@ const useStyles = makeStyles(theme => ({
  * todas las diferentes configuraciones nativas de Material-UI/Button.
  * @param {string} label Texto que se muestra en el botón.
  * @param {function} onClick Evento para ejecutar un botón sin estados.
- * @param {boolean} submitClick Evento que ejecuta las animaciones de loading success y error.
- * @param {function} openDialog Evento que ejecuta abrir el modal asociado el boton submit.
+ * @param {function} handleButtonClick Evento que ejecuta las animaciones de loading success y error.
  * @param {boolean} dialog Necesita escuchar el estado de dialog para cambiar su estado a la par.
  * @param {boolean} loading Si es true, carga un progress y deshabilita el botón, de lo contrario muestra texto.
  * @param {boolean} success Si es true, el botón muestra la animación de success.
@@ -153,6 +151,7 @@ function ButtonComponent(props) {
   const [success, setSuccess] = useState(false);
   const [failed, setFailed] = useState(false);
   const [disabled, setDisabled] = useState(false);
+
   const buttonClassname = classNames({
     [classes.buttonSuccess]: success,
     [classes.buttonFailed]: failed
@@ -194,28 +193,14 @@ function ButtonComponent(props) {
     setDisabled(props.disabled);
   }, [props.disabled]);
 
-  /*  Maneja el código de cuando se ejecute el evento onClick */
-  const HandleClick = () => {
+  /*  Maneja el evento onClick */
+  const HandleButtonClick = () => {
     if (props.onClick) {
       props.onClick();
     }
 
-    if (props.submitClick) {
-      const valid = props.submitClick();
-      setLoading(true);
-      setSuccess(false);
-      setFailed(false);
-      setTimeout(function() {
-        if (valid) {
-          setLoading(false);
-          setSuccess(true);
-          props.openDialog();
-        } else {
-          setLoading(false);
-          setFailed(true);
-        }
-      }, 700);
-    }
+    /* El componente form padre es quien decide el estado del botón al hacer click */
+    if (props.handleButtonClick) props.handleButtonClick();
   };
 
   /* Escucha activa por el dialog para limpiar los estados del submit button */
@@ -245,7 +230,8 @@ function ButtonComponent(props) {
           ? { label: classes.labelError }
           : { disabled: classes.disabled }
       }
-      onClick={() => HandleClick()}>
+      onClick={() => HandleButtonClick()}
+    >
       {props.icon && !props.variant ? props.icon : ""}
       {props.label}
       {/* alterna entre las animaciones de success y error según los estados recibidos */}
@@ -269,7 +255,8 @@ function ButtonComponent(props) {
       size={props.size}
       className={classes.fab}
       /* setea la variante para los fabs */
-      variant={props.variant == "extended" ? "extended" : "round"}>
+      variant={props.variant == "extended" ? "extended" : "round"}
+    >
       {/* estiliza el icon en caso que sea "extendedFab" */}
       {props.variant == "round" ? (
         props.icon ? (

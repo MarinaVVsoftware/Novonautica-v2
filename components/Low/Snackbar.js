@@ -53,6 +53,7 @@ const icons = {
 /** Componente Snackbar. Muestra una notificación en la pantalla asociado
  *  a un evento cual sea.
  * @param {boolean} open El componente requiere recibir un state boolean del padre
+ * @param {function} onClose callback para hacer algo cuando el snackbar se cierre
  * @param {string} type Tipo de snackbar: { error, success, info, warning, default }.
  * @param {string} text Texto mostrado en el snackbar.
  * @param {string} horizontal La orientación del snackbar horizontal.
@@ -72,6 +73,7 @@ function SnackbarComponent(props) {
       return;
     }
     setOpen(false);
+    props.onClose();
   }
 
   // segun el prop "type" cambia el tipo de snackbar
@@ -90,7 +92,8 @@ function SnackbarComponent(props) {
       autoHideDuration={props.autoHideDuration}
       anchorOrigin={{ vertical: props.vertical, horizontal: props.horizontal }}
       open={open}
-      onClose={HandleClose}>
+      onClose={HandleClose}
+    >
       <SnackbarContent
         className={classes[type]}
         onClose={HandleClose}
@@ -106,7 +109,8 @@ function SnackbarComponent(props) {
           <IconButton
             key="close"
             className={classes.close}
-            onClick={HandleClose}>
+            onClick={HandleClose}
+          >
             <CloseIcon />
           </IconButton>
         ]}
