@@ -90,8 +90,9 @@ function DatePicker(props) {
   const classes = useStyles();
   const [value, setValue] = useState("");
   const [valid, setValid] = useState(true);
-  //const [errorLabel, setErrorLabel] = useState(props.handleErrors(props.name));
+  const [errorLabel, setErrorLabel] = useState(props.handleErrors(props.name));
 
+  /* Instancia en SRR del datepicker */
   useEffect(() => {
     flatpickr(".MuiInputBase-input", {});
   }, []);
@@ -118,12 +119,12 @@ function DatePicker(props) {
 
   // Escucha y manda el valor al Form Padre
   useEffect(() => {
-    //props.handleValue(props.name, value);
+    props.handleValue(props.name, value);
   }, [value]);
 
   // Escucha por el estado de "valid"
   useEffect(() => {
-    //setValid(props.handleValid(props.name));
+    setValid(props.handleValid(props.name));
   }, [value]);
 
   // Escucha por los textos de error a mostrar
@@ -138,7 +139,8 @@ function DatePicker(props) {
         className={classes.formControl}
         disabled={props.disabled}
         error={!valid}
-        required={props.required}>
+        required={props.required}
+      >
         {/* Label en la parte superior del textbox, aqui se anuncia el nombre del textbox */}
         <InputLabel
           classes={{ focused: classes.labelFocused, root: classes.inputLabel }}

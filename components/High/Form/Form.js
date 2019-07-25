@@ -151,6 +151,7 @@ function FormComponent(props) {
     Object.keys(structure).forEach(fieldName => {
       switch (structure[fieldName].type) {
         case "Textbox":
+        case "DatePicker":
           structure[fieldName].errors = [];
           structure[fieldName].state = "";
           structure[fieldName].valid = true;
@@ -308,7 +309,8 @@ function FormComponent(props) {
         title={!failed ? props.modalTitle : props.modalTitleError}
         description={
           !failed ? props.modalDescription : props.modalDescriptionError
-        }>
+        }
+      >
         {actions}
       </Modal>
       <div className={classes.root}>
