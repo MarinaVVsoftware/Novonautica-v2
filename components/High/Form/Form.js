@@ -53,6 +53,10 @@ function FormComponent(props) {
     if (fetchData.code != null) ProcessFetchResult();
   }, [fetchData]);
 
+  useEffect(() => {
+    console.log(props.children);
+  });
+
   /* función que se encarga del algoritmo para inyectar 
   los handlers a cada componente */
   const InyectProps = () => {
@@ -61,6 +65,7 @@ function FormComponent(props) {
       por cada tipo de componente rendereable. */
       switch (input.type.name) {
         case "Textbox":
+        case "DatePicker":
           return React.cloneElement(input, {
             key: index,
             handleValue: HandleTextboxValue,
@@ -303,8 +308,7 @@ function FormComponent(props) {
         title={!failed ? props.modalTitle : props.modalTitleError}
         description={
           !failed ? props.modalDescription : props.modalDescriptionError
-        }
-      >
+        }>
         {actions}
       </Modal>
       <div className={classes.root}>
