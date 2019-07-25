@@ -121,6 +121,7 @@ function FormComponent(props) {
   /* Toma las reglas de validación del control a validar
   y procede a introducirlas en su validador rectal */
   const ValidateControl = (fieldName, value) => {
+    console.log(structure);
     structure[fieldName].errors = [];
     if (structure[fieldName].rules) {
       structure[fieldName].rules.forEach(rule => {

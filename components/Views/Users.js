@@ -121,7 +121,6 @@ function Users(props) {
           className={classes.Box}>
           Crear Usuario:
         </Box>
-        <DatePicker label="Fecha de Reclutamiento" name="recruitDate" />
 
         {status.loading || roles.loading || error ? (
           <Loader />
@@ -144,6 +143,7 @@ function Users(props) {
             <Textbox label={"Nombre"} name={"name"} />
             <Textbox label={"Usuario"} name={"username"} />
             <Textbox label={"Email"} name={"email"} />
+            <DatePicker label="Fecha de Reclutamiento" name="recruitDate" />
             <Textbox label={"Contraseña"} name={"password"} type="password" />
             <Combobox
               options={status.response.status.map(status => {

@@ -9,6 +9,7 @@ import {
   FilledInput,
   FormHelperText
 } from "@material-ui/core";
+import clsx from "clsx";
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -90,47 +91,52 @@ function DatePicker(props) {
   const classes = useStyles();
   const [value, setValue] = useState("");
   const [valid, setValid] = useState(true);
-  //const [errorLabel, setErrorLabel] = useState(props.handleErrors(props.name));
+  const [errorLabel, setErrorLabel] = useState(props.handleErrors(props.name));
 
+  /* Instancia el datepicker y crea un evento onChange especial, que
+  se conecta con la función HandleChange */
   useEffect(() => {
-    console.log(props.id);
-    flatpickr(".MuiInputBase-input", {});
+    flatpickr(".DatePicker", {
+      onChange: (selectedDates, dateStr, instance) => {
+        HandleChange(selectedDates, dateStr, instance);
+      }
+    });
   }, []);
 
   // escucha cada que el formulario hace submit
-  /*useEffect(() => {
+  useEffect(() => {
     setValid(props.handleValid(props.name));
     setErrorLabel(props.handleErrors(props.name));
-  }, [props.click]);*/
+  }, [props.click]);
 
   // escucha cada que el diálogo se cierra, y limpia los estados
-  /*useEffect(() => {
+  useEffect(() => {
     if (!props.dialog) {
       setValue("");
       setValid(props.handleValid(props.name));
       setErrorLabel(props.handleErrors(props.name));
     }
-  }, [props.dialog]);*/
+  }, [props.dialog]);
 
   /* Cada que el input cambie, lo setea */
-  const HandleChange = e => {
-    setValue(e.target.value);
+  const HandleChange = (selectedDates, dateStr, instance) => {
+    setValue(dateStr);
   };
 
   // Escucha y manda el valor al Form Padre
   useEffect(() => {
-    //props.handleValue(props.name, value);
+    props.handleValue(props.name, value);
   }, [value]);
 
   // Escucha por el estado de "valid"
   useEffect(() => {
-    //setValid(props.handleValid(props.name));
+    setValid(props.handleValid(props.name));
   }, [value]);
 
   // Escucha por los textos de error a mostrar
-  /*useEffect(() => {
+  useEffect(() => {
     setErrorLabel(props.handleErrors(props.name));
-  }, [value]);*/
+  }, [value]);
 
   return (
     <div>
@@ -149,7 +155,7 @@ function DatePicker(props) {
           {props.label}
         </InputLabel>
         <FilledInput
-          className={classes.filledInput}
+          className={clsx(classes.filledInput, "DatePicker")}
           classes={{
             underline: classes.underline,
             disabled: classes.filledInputDisabled
@@ -158,7 +164,6 @@ function DatePicker(props) {
           name={props.id}
           readOnly={props.readOnly}
           value={value}
-          onChange={HandleChange}
         />
       </FormControl>
       {/* Maneja el texto de error cuando un error se presenta. */}
