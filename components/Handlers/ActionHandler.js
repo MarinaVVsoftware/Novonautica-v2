@@ -4,7 +4,7 @@ let actionHandler = {
   }
 };
 
-export let users = {
+export let userActions = {
   modifyUser: function(array) {
     // hacer el fetch aqui
     console.log(array);

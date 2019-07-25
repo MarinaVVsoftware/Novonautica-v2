@@ -71,7 +71,7 @@ class MyApp extends App {
     params.headers.authorization = cookies.token;
     process.env.NODE_TLS_REJECT_UNAUTHORIZED;
     const initialReq = await fetch(
-      `https://novocore-dev.novonautica.com/api/users/${cookies.user}`,
+      `http://localhost:8080/api/users/${cookies.user}`,
       params
     );
     data = await initialReq.json();

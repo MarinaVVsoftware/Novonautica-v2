@@ -73,7 +73,9 @@ function SnackbarComponent(props) {
       return;
     }
     setOpen(false);
-    props.onClose();
+    if (props.onClose) {
+      props.onClose();
+    }
   }
 
   // segun el prop "type" cambia el tipo de snackbar
@@ -92,8 +94,7 @@ function SnackbarComponent(props) {
       autoHideDuration={props.autoHideDuration}
       anchorOrigin={{ vertical: props.vertical, horizontal: props.horizontal }}
       open={open}
-      onClose={HandleClose}
-    >
+      onClose={HandleClose}>
       <SnackbarContent
         className={classes[type]}
         onClose={HandleClose}
@@ -109,8 +110,7 @@ function SnackbarComponent(props) {
           <IconButton
             key="close"
             className={classes.close}
-            onClick={HandleClose}
-          >
+            onClick={HandleClose}>
             <CloseIcon />
           </IconButton>
         ]}

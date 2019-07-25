@@ -164,7 +164,7 @@ function DataTable(props) {
 }
 
 DataTable.propTypes = {
-  data: PropTypes.object.isRequired,
+  data: PropTypes.array.isRequired,
   actions: PropTypes.shape({
     list: PropTypes.array,
     set: PropTypes.object

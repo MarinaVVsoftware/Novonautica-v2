@@ -3,7 +3,7 @@ import fetch from "isomorphic-fetch";
 import jsCookie from "js-cookie";
 
 function useFetch(url, method, body) {
-  const server = process.env.NOVOCORE_SERVER;
+  const SERVER = process.env.NOVOCORE_SERVER_LOCAL;
   const [response, setResponse] = useState(null);
   const [statusCode, setStatusCode] = useState(null);
   const [error, setError] = useState(false);
@@ -27,7 +27,7 @@ function useFetch(url, method, body) {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch(server + url, params);
+        const response = await fetch(SERVER + url, params);
         const json = await response.json();
 
         /* Obliga a setear los valores en el orden y momento correcto.

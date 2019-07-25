@@ -10,7 +10,7 @@ import Button from "../Low/Button";
 import Combobox from "../Low/ComboBox";
 import Loader from "../Low/Loader";
 import DataTable from "../High/DataTable";
-import { users } from "../Handlers/ActionHandler";
+import { userActions } from "../Handlers/ActionHandler";
 import Router from "next/router";
 import useFetch from "../../helpers/useFetch";
 import getPermissions from "../../helpers/getPermissions";
@@ -39,6 +39,7 @@ function Users(props) {
   const permissions = getPermissions("RRHH", "Usuarios", props.permissions);
   const status = useFetch("/api/users/status/", "GET");
   const roles = useFetch("/api/users/roles/", "GET");
+  const users = useFetch("/api/users/", "GET");
 
   let params = [
     {
@@ -88,6 +89,11 @@ function Users(props) {
     setErrorMessage(roles.response);
   }, [roles.error]);
 
+  useEffect(() => {
+    setError(users.error);
+    setErrorMessage(users.response);
+  }, [users.error]);
+
   /* Obtiene los datos, los manipula, y se los devuelve al form como los params
   para hacer el fetch */
   const getResponse = data => {
@@ -106,8 +112,7 @@ function Users(props) {
         <Box
           fontWeight="fontWeightRegular"
           fontSize="h5.fontSize"
-          className={classes.Box}
-        >
+          className={classes.Box}>
           Crear Usuario:
         </Box>
         {status.loading || roles.loading || error ? (
@@ -127,8 +132,7 @@ function Users(props) {
               <Save className={clsx(classes.leftIcon, classes.smallIcon)} />
             }
             modalActions={actions}
-            getResponse={getResponse}
-          >
+            getResponse={getResponse}>
             <Textbox label={"Nombre"} name={"name"} />
             <Textbox label={"Usuario"} name={"username"} />
             <Textbox label={"Email"} name={"email"} />
@@ -169,19 +173,19 @@ function Users(props) {
   const RenderUsersTable = () => {
     return permissions.includes("VerUsuarios") ? (
       <Container>
-        {usersLoading ? (
+        {users.loading || error ? (
           <Loader />
         ) : (
           <DataTable
-            data={usersData.users}
+            data={users.response.users}
             title="Lista de Usuarios"
             actions={
               usersActionTable().length > 0
-                ? { list: usersActionTable(), set: users }
+                ? { list: usersActionTable(), set: userActions }
                 : null
             }
             config={{
-              rowsPerPage: usersData.users.length,
+              rowsPerPage: users.response.users.length,
               defaultSort: "desc"
             }}
           />
