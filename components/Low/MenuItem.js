@@ -11,6 +11,7 @@ import ListItemText from "@material-ui/core/ListItemText";
 import MenuItemNested from "./MenuItemNested";
 import Tooltip from "@material-ui/core/Tooltip";
 import PropTypes from "prop-types";
+import Link from "next/link";
 
 const useStyles = makeStyles(theme => ({
   color: {
@@ -18,6 +19,11 @@ const useStyles = makeStyles(theme => ({
   },
   nested: {
     paddingLeft: theme.spacing(4)
+  },
+  link: {
+    display: "flex",
+    textDecoration: "none",
+    width: "100%"
   }
 }));
 
@@ -33,12 +39,8 @@ function MenuItem(props) {
   const menuItem = props.menuItem;
 
   // Función que se comparte con otros componentes para realizar la acción del click
-  const handleClick = (
-    { handleDrawerClose, handleModuleChange },
-    moduleName
-  ) => {
+  const handleClick = ({ handleDrawerClose }) => {
     handleDrawerClose();
-    handleModuleChange(moduleName);
   };
 
   // Función para asignar el bool para el menú anidado
@@ -48,33 +50,62 @@ function MenuItem(props) {
 
   return (
     <div>
-      <ListItem
-        button
-        // Si menuItem.subModules está declarado, se ejecuta el handleClickNested, sino handleClick
-        onClick={() =>
-          menuItem.subModules
-            ? handleClickNested()
-            : handleClick(props, menuItem.moduleName)
-        }>
-        <Tooltip title={menuItem.moduleName} placement="right-start">
-          <ListItemIcon className={classes.color}>
-            {/* Si iconHandler[menuItem.moduleName] 
+      {menuItem.subModules ? (
+        <ListItem
+          button
+          // Si menuItem.subModules está declarado, se ejecuta el handleClickNested, sino handleClick
+          onClick={() =>
+            menuItem.subModules ? handleClickNested() : handleClick(props)
+          }>
+          <Tooltip title={menuItem.moduleName} placement="right-start">
+            <ListItemIcon className={classes.color}>
+              {/* Si iconHandler[menuItem.moduleName] 
                         esta declarado le asigna el icono, 
                         sino realiza un fallback con el icono explore */}
-            {iconHandler[menuItem.moduleName] ? (
-              iconHandler[menuItem.moduleName]
-            ) : (
-              <Explore />
-            )}
-          </ListItemIcon>
-        </Tooltip>
-        <ListItemText
-          classes={{ primary: classes.color }}
-          primary={menuItem.moduleName}
-        />
-        {/* Si menu.subModules esta declarado, realiza otra condición para operar el icono del dropdown */}
-        {menuItem.subModules ? open ? <ExpandLess /> : <ExpandMore /> : ""}
-      </ListItem>
+              {iconHandler[menuItem.moduleName] ? (
+                iconHandler[menuItem.moduleName]
+              ) : (
+                <Explore />
+              )}
+            </ListItemIcon>
+          </Tooltip>
+          <ListItemText
+            classes={{ primary: classes.color }}
+            primary={menuItem.moduleName}
+          />
+          {/* Si menu.subModules esta declarado, realiza otra condición para operar el icono del dropdown */}
+          {menuItem.subModules ? open ? <ExpandLess /> : <ExpandMore /> : ""}
+        </ListItem>
+      ) : (
+        <ListItem
+          button
+          // Si menuItem.subModules está declarado, se ejecuta el handleClickNested, sino handleClick
+          onClick={() =>
+            menuItem.subModules ? handleClickNested() : handleClick(props)
+          }>
+          <Link href={"/" + menuItem.moduleName}>
+            <a className={classes.link}>
+              {" "}
+              <Tooltip title={menuItem.moduleName} placement="right-start">
+                <ListItemIcon className={classes.color}>
+                  {/* Si iconHandler[menuItem.moduleName] 
+                      esta declarado le asigna el icono, 
+                      sino realiza un fallback con el icono explore */}
+                  {iconHandler[menuItem.moduleName] ? (
+                    iconHandler[menuItem.moduleName]
+                  ) : (
+                    <Explore />
+                  )}
+                </ListItemIcon>
+              </Tooltip>
+              <ListItemText
+                classes={{ primary: classes.color }}
+                primary={menuItem.moduleName}
+              />
+            </a>
+          </Link>
+        </ListItem>
+      )}
 
       {/* Si menuItem.subModules esta declarado, llama al componente del dropdown */}
       {menuItem.subModules ? (
@@ -85,7 +116,6 @@ function MenuItem(props) {
               key={index}
               handleClick={handleClick}
               handleDrawerClose={props.handleDrawerClose}
-              handleModuleChange={props.handleModuleChange}
             />
           ))}
         </Collapse>

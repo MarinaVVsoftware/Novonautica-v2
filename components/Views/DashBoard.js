@@ -38,11 +38,6 @@ function DashBoardComponent(props) {
     setOpen(false);
   }
 
-  // Acción que detecta que modulo cambiar
-  function handleModuleChange(moduleName) {
-    moduleName ? setModule(moduleName) : setModule("Home");
-  }
-
   function actualModule() {
     return React.cloneElement(props.children, {
       permissions: props.menu
@@ -61,7 +56,6 @@ function DashBoardComponent(props) {
         menu={props.menu}
         open={open}
         handleDrawerClose={handleDrawerClose}
-        handleModuleChange={handleModuleChange}
       />
       <main className={classes.content}>
         <div className={classes.toolbar} />

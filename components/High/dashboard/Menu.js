@@ -46,7 +46,6 @@ function MenuComponent(props) {
             menuItem={item}
             key={index}
             handleDrawerClose={props.handleDrawerClose}
-            handleModuleChange={props.handleModuleChange}
           />
         ))}
       </List>

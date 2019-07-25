@@ -8,6 +8,8 @@ import Explore from "@material-ui/icons/Explore";
 import iconHandler from "../Handlers/IconHandler";
 import Tooltip from "@material-ui/core/Tooltip";
 import PropTypes from "prop-types";
+import Link from "next/Link";
+import lowerCase from "../../helpers/lowerCase";
 
 const useStyles = makeStyles(theme => ({
   color: {
@@ -15,6 +17,11 @@ const useStyles = makeStyles(theme => ({
   },
   nested: {
     paddingLeft: theme.spacing(4)
+  },
+  link: {
+    display: "flex",
+    textDecoration: "none",
+    width: "100%"
   }
 }));
 
@@ -23,33 +30,34 @@ const useStyles = makeStyles(theme => ({
  * @param {object} item Recupera el menu anidado.
  * @param {func} handleClick Función para realizar el click.
  * @param {func} handleDrawerClose Función para cerrar el drawer.
- * @param {func} handleModuleChange Función para cambiar de componente.
  */
 function MenuItemNested(props) {
   const classes = useStyles();
   const menuItem = props.item;
   return (
-    <List component="div" disablePadding>
-      <ListItem
-        button
-        className={classes.nested}
-        // Se realiza la funcion del handleClick traida desde props
-        onClick={() => props.handleClick(props, menuItem.subModuleName)}>
-        <Tooltip title={menuItem.subModuleName} placement="right-start">
-          <ListItemIcon className={classes.color}>
-            {iconHandler[menuItem.subModuleName] ? (
-              iconHandler[menuItem.subModuleName]
-            ) : (
-              <Explore />
-            )}
-          </ListItemIcon>
-        </Tooltip>
-        <ListItemText
-          classes={{ primary: classes.color }}
-          primary={menuItem.subModuleName}
-        />
-      </ListItem>
-    </List>
+    <ListItem
+      button
+      className={classes.nested}
+      // Se realiza la funcion del handleClick traida desde props
+      onClick={() => props.handleClick(props)}>
+      <Link href={"/" + lowerCase(menuItem.subModuleName)}>
+        <a className={classes.link}>
+          <Tooltip title={menuItem.subModuleName} placement="right-start">
+            <ListItemIcon className={classes.color}>
+              {iconHandler[menuItem.subModuleName] ? (
+                iconHandler[menuItem.subModuleName]
+              ) : (
+                <Explore />
+              )}
+            </ListItemIcon>
+          </Tooltip>
+          <ListItemText
+            classes={{ primary: classes.color }}
+            primary={menuItem.subModuleName}
+          />
+        </a>
+      </Link>
+    </ListItem>
   );
 }
 

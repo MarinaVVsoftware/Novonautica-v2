@@ -78,7 +78,6 @@ function DrawerComponent(props) {
       </div>
       <MenuComponent
         handleDrawerClose={props.handleDrawerClose}
-        handleModuleChange={props.handleModuleChange}
         menu={props.menu}
       />
     </Drawer>
