@@ -53,10 +53,6 @@ function FormComponent(props) {
     if (fetchData.code != null) ProcessFetchResult();
   }, [fetchData]);
 
-  useEffect(() => {
-    console.log(props.children);
-  });
-
   /* función que se encarga del algoritmo para inyectar 
   los handlers a cada componente */
   const InyectProps = () => {
@@ -309,8 +305,7 @@ function FormComponent(props) {
         title={!failed ? props.modalTitle : props.modalTitleError}
         description={
           !failed ? props.modalDescription : props.modalDescriptionError
-        }
-      >
+        }>
         {actions}
       </Modal>
       <div className={classes.root}>

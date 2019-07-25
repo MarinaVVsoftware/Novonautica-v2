@@ -90,27 +90,27 @@ function DatePicker(props) {
   const classes = useStyles();
   const [value, setValue] = useState("");
   const [valid, setValid] = useState(true);
-  const [errorLabel, setErrorLabel] = useState(props.handleErrors(props.name));
+  //const [errorLabel, setErrorLabel] = useState(props.handleErrors(props.name));
 
-  /* Instancia en SRR del datepicker */
   useEffect(() => {
+    console.log(props.id);
     flatpickr(".MuiInputBase-input", {});
   }, []);
 
   // escucha cada que el formulario hace submit
-  useEffect(() => {
+  /*useEffect(() => {
     setValid(props.handleValid(props.name));
     setErrorLabel(props.handleErrors(props.name));
-  }, [props.click]);
+  }, [props.click]);*/
 
   // escucha cada que el diálogo se cierra, y limpia los estados
-  useEffect(() => {
+  /*useEffect(() => {
     if (!props.dialog) {
       setValue("");
       setValid(props.handleValid(props.name));
       setErrorLabel(props.handleErrors(props.name));
     }
-  }, [props.dialog]);
+  }, [props.dialog]);*/
 
   /* Cada que el input cambie, lo setea */
   const HandleChange = e => {
@@ -119,18 +119,18 @@ function DatePicker(props) {
 
   // Escucha y manda el valor al Form Padre
   useEffect(() => {
-    props.handleValue(props.name, value);
+    //props.handleValue(props.name, value);
   }, [value]);
 
   // Escucha por el estado de "valid"
   useEffect(() => {
-    setValid(props.handleValid(props.name));
+    //setValid(props.handleValid(props.name));
   }, [value]);
 
   // Escucha por los textos de error a mostrar
-  useEffect(() => {
+  /*useEffect(() => {
     setErrorLabel(props.handleErrors(props.name));
-  }, [value]);
+  }, [value]);*/
 
   return (
     <div>
@@ -139,8 +139,7 @@ function DatePicker(props) {
         className={classes.formControl}
         disabled={props.disabled}
         error={!valid}
-        required={props.required}
-      >
+        required={props.required}>
         {/* Label en la parte superior del textbox, aqui se anuncia el nombre del textbox */}
         <InputLabel
           classes={{ focused: classes.labelFocused, root: classes.inputLabel }}
