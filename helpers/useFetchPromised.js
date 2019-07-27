@@ -3,7 +3,7 @@ import fetch from "isomorphic-fetch";
 import jsCookie from "js-cookie";
 
 async function useFetch(url, method, body) {
-  const server = process.env.NOVOCORE_SERVER;
+  const SERVER = process.env.NOVOCORE_SERVER_LOCAL;
 
   /* Parámetros de fetch */
   const token = jsCookie.get("token");
@@ -20,7 +20,7 @@ async function useFetch(url, method, body) {
 
   if (body && method != "GET") params.body = JSON.stringify(body);
 
-  return await fetch(server + url, params);
+  return await fetch(SERVER + url, params);
 }
 
 export default useFetch;

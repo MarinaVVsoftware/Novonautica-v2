@@ -85,6 +85,9 @@ const useStyles = makeStyles(theme => ({
  * @param {boolean} required Establece si es un formulario requerido del conjunto.
  * @param {string} id id y name del formulario.
  * @param {boolean} readOnly Convierte el textbox en "solo lectura".
+ * @param {string} minDate fecha minima al dia de hoy.
+ * @param {string} maxDate fecha maxima al dia de hoy.
+ * @param {string} range Modo rango de fechas.
  *
  */
 function DatePicker(props) {
@@ -96,7 +99,13 @@ function DatePicker(props) {
   /* Instancia el datepicker y crea un evento onChange especial, que
   se conecta con la función HandleChange */
   useEffect(() => {
+    const config = {};
+    if (props.minDate) config.minDate = "today";
+    if (props.maxDate) config.maxDate = "today";
+    if (props.range) config.mode = "range";
+
     flatpickr(".DatePicker", {
+      ...config,
       onChange: (selectedDates, dateStr, instance) => {
         HandleChange(selectedDates, dateStr, instance);
       }

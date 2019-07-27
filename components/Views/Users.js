@@ -10,7 +10,6 @@ import Button from "../Low/Button";
 import Combobox from "../Low/ComboBox";
 import Loader from "../Low/Loader";
 import DataTable from "../High/DataTable";
-import { userActions } from "../Handlers/ActionHandler";
 import Router from "next/router";
 import useFetch from "../../helpers/useFetch";
 import getPermissions from "../../helpers/getPermissions";
@@ -18,6 +17,14 @@ import clsx from "clsx";
 import Save from "@material-ui/icons/Save";
 import SnackbarComponent from "../Low/Snackbar";
 import DatePicker from "../Low/DatePicker";
+import useFetchPromise from "../../helpers/useFetchPromised";
+
+const responseEmpty = {
+  response: null,
+  statusCode: null,
+  loading: true,
+  error: false
+};
 
 const useStyles = makeStyles(theme => ({
   Box: {
@@ -40,7 +47,25 @@ function Users(props) {
   const permissions = getPermissions("RRHH", "Usuarios", props.permissions);
   const status = useFetch("/api/users/status/", "GET");
   const roles = useFetch("/api/users/roles/", "GET");
-  const users = useFetch("/api/users/", "GET");
+  const [users, setUsers] = useState(responseEmpty);
+  const [deleteUser, setDeleteUser] = useState(null);
+
+  useEffect(() => {
+    if (users.response == null) MyHappyGet();
+  }, [users]);
+
+  const MyHappyGet = () => {
+    let code = null;
+
+    useFetchPromise("/api/users/", "GET")
+      .then(res => {
+        code = res.status;
+        if (res.status < 201 || res.status > 299) return res.json();
+        else return null;
+      })
+      .then(response => setUsers({ code: code, response: response }))
+      .catch(error => setUsers({ code: 500, response: { error: error } }));
+  };
 
   let params = [
     {
@@ -100,6 +125,10 @@ function Users(props) {
     setErrorMessage(users.response);
   }, [users.error]);
 
+  useEffect(() => {
+    if (deleteUser) console.log(deleteUser);
+  }, [deleteUser]);
+
   /* Obtiene los datos, los manipula, y se los devuelve al form como los params
   para hacer el fetch */
   const getResponse = data => {
@@ -119,7 +148,7 @@ function Users(props) {
           fontWeight="fontWeightRegular"
           fontSize="h5.fontSize"
           className={classes.Box}>
-          Crear Usuario:
+          Crear Usuario
         </Box>
 
         {status.loading || roles.loading || error ? (
@@ -133,7 +162,7 @@ function Users(props) {
             modalDescriptionError={
               "La creación del usuario ha fallado. Contacte con soporte."
             }
-            submitLabel={"continuar"}
+            submitLabel={"GUARDAR"}
             submitType={"accented"}
             submitIcon={
               <Save className={clsx(classes.leftIcon, classes.smallIcon)} />
@@ -143,7 +172,11 @@ function Users(props) {
             <Textbox label={"Nombre"} name={"name"} />
             <Textbox label={"Usuario"} name={"username"} />
             <Textbox label={"Email"} name={"email"} />
-            <DatePicker label="Fecha de Reclutamiento" name="recruitDate" />
+            <DatePicker
+              label="F. Reclutamiento"
+              name="recruitDate"
+              maxDate="today"
+            />
             <Textbox label={"Contraseña"} name={"password"} type="password" />
             <Combobox
               options={status.response.status.map(status => {
@@ -165,6 +198,29 @@ function Users(props) {
     ) : (
       ""
     );
+  };
+
+  const userActions = {
+    modifyUser: function(array) {
+      // hacer el fetch aqui
+      setUsers(responseEmpty);
+    },
+    deleteUser: function(array) {
+      let code = null;
+      useFetchPromise(`/api/users/${array[3]}`, "DELETE")
+        .then(res => {
+          code = res.status;
+          if (res.status < 201 || res.status > 299) return res.json();
+          else return null;
+        })
+        .then(response => {
+          setDeleteUser({ code: code, response: response });
+          users = useFetch("/api/users/", "GET");
+        })
+        .catch(error => {
+          setDeleteUser({ code: 500, response: { error: error } });
+        });
+    }
   };
 
   const usersActionTable = () => {
