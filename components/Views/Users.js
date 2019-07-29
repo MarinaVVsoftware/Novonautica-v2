@@ -10,7 +10,6 @@ import Button from "../Low/Button";
 import Combobox from "../Low/ComboBox";
 import Loader from "../Low/Loader";
 import DataTable from "../High/DataTable";
-import Router from "next/router";
 import useFetch from "../../helpers/useFetch";
 import getPermissions from "../../helpers/getPermissions";
 import clsx from "clsx";
@@ -18,13 +17,7 @@ import Save from "@material-ui/icons/Save";
 import SnackbarComponent from "../Low/Snackbar";
 import DatePicker from "../Low/DatePicker";
 import useFetchPromise from "../../helpers/useFetchPromised";
-
-const responseEmpty = {
-  response: null,
-  statusCode: null,
-  loading: true,
-  error: false
-};
+import Modal from "../High/Modal";
 
 const useStyles = makeStyles(theme => ({
   Box: {
@@ -42,6 +35,12 @@ const useStyles = makeStyles(theme => ({
 
 function Users(props) {
   const classes = useStyles();
+  const responseEmpty = {
+    response: null,
+    statusCode: null,
+    loading: true,
+    error: false
+  };
   const [error, setError] = useState(false);
   const [errorMessage, setErrorMessage] = useState(null);
   const permissions = getPermissions("RRHH", "Usuarios", props.permissions);
@@ -49,14 +48,9 @@ function Users(props) {
   const roles = useFetch("/api/users/roles/", "GET");
   const [users, setUsers] = useState(responseEmpty);
   const [deleteUser, setDeleteUser] = useState(null);
-
-  useEffect(() => {
-    if (users.response == null) MyHappyGet();
-  }, [users]);
-
-  const MyHappyGet = () => {
+  const [open, setOpen] = useState(false);
+  const refreshUsers = () => {
     let code = null;
-
     useFetchPromise("/api/users/", "GET")
       .then(res => {
         code = res.status;
@@ -66,7 +60,6 @@ function Users(props) {
       .then(response => setUsers({ code: code, response: response }))
       .catch(error => setUsers({ code: 500, response: { error: error } }));
   };
-
   let params = [
     {
       key: "name",
@@ -89,7 +82,7 @@ function Users(props) {
       rules: rulesTypes.password
     },
     {
-      key: "recruitDate",
+      key: "recruitmentDate",
       type: "DatePicker",
       rules: null
     },
@@ -105,9 +98,7 @@ function Users(props) {
     }
   ];
   let structure = new StructureForm(params);
-
-  /* Conjunto de acciones para los rows del datatable */
-  const actions = [<Button label={"Aceptar"} type={"default"} />];
+  const actionButton = [<Button label={"Aceptar"} type={"default"} />];
 
   /* Revisan los errores de los fetch GET */
   useEffect(() => {
@@ -126,14 +117,24 @@ function Users(props) {
   }, [users.error]);
 
   useEffect(() => {
-    if (deleteUser) console.log(deleteUser);
+    if (deleteUser) setUsers(responseEmpty);
   }, [deleteUser]);
+
+  useEffect(() => {
+    if (users.response == null) refreshUsers();
+  }, [users]);
+
+  const hanldeClickOpen = () => {
+    setOpen(true);
+  };
+
+  const handleClickClose = () => {
+    setOpen(false);
+  };
 
   /* Obtiene los datos, los manipula, y se los devuelve al form como los params
   para hacer el fetch */
-  const getResponse = data => {
-    data.recruitmentDate = "2019-01-01";
-
+  const saveUser = data => {
     return {
       url: "/api/users/" + data.username,
       method: "PUT",
@@ -159,22 +160,20 @@ function Users(props) {
             modalTitle={"Crear Usuario"}
             modalDescription={"El usuario se ha creado exitosamente."}
             modalTitleError={"Crear Usuario: error"}
-            modalDescriptionError={
-              "La creación del usuario ha fallado. Contacte con soporte."
-            }
+            modalDescriptionError={"No se ha podido crear al usuario."}
             submitLabel={"GUARDAR"}
             submitType={"accented"}
             submitIcon={
               <Save className={clsx(classes.leftIcon, classes.smallIcon)} />
             }
-            modalActions={actions}
-            getResponse={getResponse}>
+            modalActions={actionButton}
+            getResponse={saveUser}>
             <Textbox label={"Nombre"} name={"name"} />
             <Textbox label={"Usuario"} name={"username"} />
             <Textbox label={"Email"} name={"email"} />
             <DatePicker
               label="F. Reclutamiento"
-              name="recruitDate"
+              name="recruitmentDate"
               maxDate="today"
             />
             <Textbox label={"Contraseña"} name={"password"} type="password" />
@@ -203,7 +202,8 @@ function Users(props) {
   const userActions = {
     modifyUser: function(array) {
       // hacer el fetch aqui
-      setUsers(responseEmpty);
+      //setUsers(responseEmpty);
+      hanldeClickOpen();
     },
     deleteUser: function(array) {
       let code = null;
@@ -215,7 +215,6 @@ function Users(props) {
         })
         .then(response => {
           setDeleteUser({ code: code, response: response });
-          users = useFetch("/api/users/", "GET");
         })
         .catch(error => {
           setDeleteUser({ code: 500, response: { error: error } });
@@ -271,6 +270,9 @@ function Users(props) {
         vertical={"bottom"}
         horizontal={"left"}
       />
+      <Modal open={open} onClose={handleClickClose}>
+        {RenderUsersForm()}
+      </Modal>
     </div>
   );
 }

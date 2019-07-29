@@ -34,8 +34,8 @@ const useStyles = makeStyles({
 /**
  * Simple modal.
  * 1.- Declarar un Hook "open" con su funcion y establecerlo en falso.
- * 2.- Declarar una función handleClickOpen(), dentro la función del hook "open" tendrá true.
- * 3.- Declarar una función handleClose(), dentro la función del hook "open" tendrá false.
+ * 2.- Declarar una función handleClickOpen(), dentro la función del hook "open" tendrá true. Llama a esa función donde vaya a suceder una acción que abra el modal.
+ * 3.- Declarar una función handleClickClose(), dentro la función del hook "open" tendrá false.
  * @param {bool} open Bool para detectar cuando esta y no abierto.
  * @param {func} onClose Función que setea el hook a falso.
  * @param {string} title Titulo para el modal.
@@ -50,7 +50,7 @@ function Modal(props) {
   function handleClose() {
     onClose();
   }
-  
+
   return (
     <Dialog
       aria-labelledby="Dialog"
@@ -60,16 +60,14 @@ function Modal(props) {
         root: classes.backgroundModal,
         paperFullScreen: classes.modal
       }}
-      PaperProps={{ className: classes.paper }}
-    >
+      PaperProps={{ className: classes.paper }}>
       {props.fullScreen ? (
         <AppBar className={classes.appBar}>
           <Toolbar>
             <IconButton
               color="inherit"
               onClick={handleClose}
-              aria-label="Close"
-            >
+              aria-label="Close">
               <CloseIcon />
             </IconButton>
             <Typography variant={"h6"} color="inherit" className={classes.flex}>
@@ -83,13 +81,11 @@ function Modal(props) {
           <DialogTitle
             id="dialog-title"
             className={classes.modal}
-            disableTypography
-          >
+            disableTypography>
             <Typography
               variant={"h6"}
               color="inherit"
-              classes={{ root: classes.color }}
-            >
+              classes={{ root: classes.color }}>
               {props.title}
             </Typography>
           </DialogTitle>
@@ -97,8 +93,7 @@ function Modal(props) {
           <DialogContent className={classes.modal}>
             <DialogContentText
               id="alert-dialog-description"
-              className={classes.modal}
-            >
+              className={classes.modal}>
               {props.description}
             </DialogContentText>
           </DialogContent>
