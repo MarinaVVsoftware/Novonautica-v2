@@ -28,6 +28,7 @@ const useStyles = makeStyles(theme => ({
  * @param {string} modalDescriptionError Descripción dentro del modal en caso que el fetch retorne error.
  * @param {string} submitLabel Texto del botón submit.
  * @param {string} submitType Tipo del botón.
+ * @param {bool}   lg Acepta medida lg auto.
  * @param {Element} submitIcon Icono para el botón.
  * @param {Elements} modalActions Conjunto de botones a renderear como Actions del modal.
  * @param {function} getResponse Función que obtiene la respuesta del submit.
@@ -295,7 +296,6 @@ function FormComponent(props) {
   Esta función debe ir hasta abajo antes del render. Se ejecuta aquí. */
   InyectProps();
   CreateActions();
-
   return (
     <React.Fragment>
       {/* Modal que abre el button Submit */}
@@ -312,23 +312,24 @@ function FormComponent(props) {
         {/* Grid que acomoda los elementos */}
         <Grid container spacing={2}>
           {inputs.map((input, index) => (
-            <Grid item md xs={12} key={index}>
+            <Grid item lg={props.lg ? true : false} md={6} xs={12} key={index}>
               {input}
             </Grid>
           ))}
         </Grid>
+        {/* Button Submit */}
+        <Button
+          label={props.submitLabel}
+          handleButtonClick={HandleButtonClick}
+          dialog={dialog}
+          type={props.submitType}
+          loading={loading}
+          success={success}
+          failed={failed}
+          icon={submitIcon}
+        />
       </div>
-      {/* Button Submit */}
-      <Button
-        label={props.submitLabel}
-        handleButtonClick={HandleButtonClick}
-        dialog={dialog}
-        type={props.submitType}
-        loading={loading}
-        success={success}
-        failed={failed}
-        icon={submitIcon}
-      />
+
       <SnackbarComponent
         type={"error"}
         text={errorMessage}

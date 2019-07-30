@@ -97,6 +97,7 @@ function Users(props) {
       rules: null
     }
   ];
+
   let structure = new StructureForm(params);
   const actionButton = [<Button label={"Aceptar"} type={"default"} />];
 
@@ -174,6 +175,7 @@ function Users(props) {
             modalDescriptionError={"No se ha podido crear al usuario."}
             submitLabel={"GUARDAR"}
             submitType={"accented"}
+            lg={true}
             submitIcon={
               <Save className={clsx(classes.leftIcon, classes.smallIcon)} />
             }
@@ -283,8 +285,53 @@ function Users(props) {
         vertical={"bottom"}
         horizontal={"left"}
       />
-      <Modal open={open} onClose={handleClickClose}>
-        {RenderUsersForm()}
+      <Modal
+        open={open}
+        onClose={handleClickClose}
+        maxWidth="sm"
+        title="Modificar Usuario">
+        {roles.loading ? (
+          <Loader />
+        ) : (
+          <Form
+            structure={structure}
+            modalTitle={"Modificar Usuario"}
+            modalDescription={"El usuario se ha modificado exitosamente."}
+            modalTitleError={"Modificar Usuario: error"}
+            modalDescriptionError={"No se ha podido modificar al usuario."}
+            submitLabel={"GUARDAR"}
+            submitType={"accented"}
+            lg={false}
+            submitIcon={
+              <Save className={clsx(classes.leftIcon, classes.smallIcon)} />
+            }
+            modalActions={actionButton}
+            getResponse={saveUser}>
+            <Textbox label={"Nombre"} name={"name"} />
+            <Textbox label={"Usuario"} name={"username"} />
+            <Textbox label={"Email"} name={"email"} />
+            <DatePicker
+              label="F. Reclutamiento"
+              name="recruitmentDate"
+              maxDate="today"
+            />
+            <Textbox label={"Contraseña"} name={"password"} type="password" />
+            <Combobox
+              options={status.response.status.map(status => {
+                return { name: status.statusName, id: status.statusId };
+              })}
+              title={"Status"}
+              name={"statusId"}
+            />
+            <Combobox
+              options={roles.response.roles.map(rol => {
+                return { name: rol.rolName, id: rol.rolId };
+              })}
+              title={"Rol"}
+              name={"rolId"}
+            />
+          </Form>
+        )}
       </Modal>
     </div>
   );

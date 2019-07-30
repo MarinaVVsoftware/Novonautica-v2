@@ -17,11 +17,11 @@ const useStyles = makeStyles({
     backgroundColor: "#0000008a"
   },
   modal: {
-    backgroundColor: "#303030",
+    backgroundColor: "#212121",
     color: "#E7E7E7 !important"
   },
   paper: {
-    backgroundColor: "#303030"
+    backgroundColor: "#212121"
   },
   color: {
     color: "#E7E7E7 !important"
@@ -78,10 +78,7 @@ function Modal(props) {
       ) : (
         <Fragment>
           {/* Titulo */}
-          <DialogTitle
-            id="dialog-title"
-            className={classes.modal}
-            disableTypography>
+          <DialogTitle id="dialog-title" disableTypography>
             <Typography
               variant={"h6"}
               color="inherit"
@@ -90,13 +87,15 @@ function Modal(props) {
             </Typography>
           </DialogTitle>
           {/* Content */}
-          <DialogContent className={classes.modal}>
-            <DialogContentText
-              id="alert-dialog-description"
-              className={classes.modal}>
-              {props.description}
-            </DialogContentText>
-          </DialogContent>
+          {props.description ? (
+            <DialogContent className={classes.modal}>
+              <DialogContentText id="alert-dialog-description">
+                {props.description}
+              </DialogContentText>
+            </DialogContent>
+          ) : (
+            ""
+          )}
           {/* Actions */}
           <DialogActions className={classes.modal}>
             {props.children}
