@@ -18,6 +18,7 @@ import SnackbarComponent from "../Low/Snackbar";
 import DatePicker from "../Low/DatePicker";
 import useFetchPromise from "../../helpers/useFetchPromised";
 import Modal from "../High/Modal";
+import CheckboxGroup from "../Low/Checkbox/CheckboxGroup";
 
 const useStyles = makeStyles(theme => ({
   Box: {
@@ -169,6 +170,7 @@ function Users(props) {
         >
           Crear Usuario
         </Box>
+        <CheckboxGroup />
 
         {status.loading || roles.loading || error ? (
           <Loader />
