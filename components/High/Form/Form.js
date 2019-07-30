@@ -33,6 +33,7 @@ const useStyles = makeStyles(theme => ({
  * @param {Elements} modalActions Conjunto de botones a renderear como Actions del modal.
  * @param {function} getResponse Función que obtiene la respuesta del submit.
  * @param {Elements} children Conjunto de formularios a renderear dentro del form.
+ * @param {object} defaults Objeto con posibles valores default para los forms.
  */
 function FormComponent(props) {
   const classes = useStyles();
@@ -69,13 +70,19 @@ function FormComponent(props) {
             handleValid: HandleValid,
             handleErrors: HandleErrors,
             click: click,
-            dialog: dialog
+            dialog: dialog,
+            default: props.defaults[input.props.name]
+              ? props.defaults[input.props.name]
+              : null
           });
         case "Combobox":
           return React.cloneElement(input, {
             key: index,
             handleValue: HandleComboboxValue,
-            restart: comboboxReset
+            restart: comboboxReset,
+            default: props.defaults[input.props.name]
+              ? props.defaults[input.props.name]
+              : null
           });
       }
     });
@@ -305,7 +312,8 @@ function FormComponent(props) {
         title={!failed ? props.modalTitle : props.modalTitleError}
         description={
           !failed ? props.modalDescription : props.modalDescriptionError
-        }>
+        }
+      >
         {actions}
       </Modal>
       <div className={classes.root}>

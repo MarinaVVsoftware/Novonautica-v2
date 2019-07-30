@@ -153,6 +153,12 @@ function Users(props) {
     };
   };
 
+  const defaults = {
+    username: "hola",
+    name: "pepe",
+    statusId: 2
+  };
+
   const RenderUsersForm = () => {
     return permissions.includes("CrearUsuario") ? (
       <Container>
@@ -169,6 +175,7 @@ function Users(props) {
         ) : (
           <Form
             structure={structure}
+            defaults={defaults}
             modalTitle={"Crear Usuario"}
             modalDescription={"El usuario se ha creado exitosamente."}
             modalTitleError={"Crear Usuario: error"}
