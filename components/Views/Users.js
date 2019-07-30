@@ -100,6 +100,16 @@ function Users(props) {
   let structure = new StructureForm(params);
   const actionButton = [<Button label={"Aceptar"} type={"default"} />];
 
+  /* Parámetros para la tabla */
+  const columns = [
+    "rolId",
+    "statusId",
+    "email",
+    "username",
+    "recruitmentDate",
+    "creationDate"
+  ];
+
   /* Revisan los errores de los fetch GET */
   useEffect(() => {
     setError(status.error);
@@ -148,7 +158,8 @@ function Users(props) {
         <Box
           fontWeight="fontWeightRegular"
           fontSize="h5.fontSize"
-          className={classes.Box}>
+          className={classes.Box}
+        >
           Crear Usuario
         </Box>
 
@@ -167,7 +178,8 @@ function Users(props) {
               <Save className={clsx(classes.leftIcon, classes.smallIcon)} />
             }
             modalActions={actionButton}
-            getResponse={saveUser}>
+            getResponse={saveUser}
+          >
             <Textbox label={"Nombre"} name={"name"} />
             <Textbox label={"Usuario"} name={"username"} />
             <Textbox label={"Email"} name={"email"} />
@@ -249,7 +261,8 @@ function Users(props) {
             }
             config={{
               rowsPerPage: users.response.users.length,
-              defaultSort: "desc"
+              defaultSort: "desc",
+              columns: columns
             }}
           />
         )}

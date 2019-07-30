@@ -75,7 +75,15 @@ function DataTable(props) {
     const columns = Object.keys(objectFormat);
     const formattedColumns = [];
     columns.forEach(element => {
-      formattedColumns.push([element, prettifyCamelCase(element)]);
+      console.log(props.config.columns.includes(element));
+
+      /* si existe el objeto props.config.columns entonces filtra las columnas
+      que serán rendereadas. el objeto debe ser un array de strings con los nombres
+      de las columnas como vienen de la API */
+      if (props.config.columns) {
+        if (props.config.columns.includes(element))
+          formattedColumns.push([element, prettifyCamelCase(element)]);
+      } else formattedColumns.push([element, prettifyCamelCase(element)]);
     });
     if (props.actions) {
       formattedColumns.push(["options", "Opciones"]);
