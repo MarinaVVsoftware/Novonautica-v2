@@ -289,8 +289,9 @@ function Users(props) {
         open={open}
         onClose={handleClickClose}
         maxWidth="sm"
-        title="Modificar Usuario">
-        {roles.loading ? (
+        title="Modificar Usuario"
+      >
+        {roles.loading || status.loading || error ? (
           <Loader />
         ) : (
           <Form
@@ -306,7 +307,8 @@ function Users(props) {
               <Save className={clsx(classes.leftIcon, classes.smallIcon)} />
             }
             modalActions={actionButton}
-            getResponse={saveUser}>
+            getResponse={saveUser}
+          >
             <Textbox label={"Nombre"} name={"name"} />
             <Textbox label={"Usuario"} name={"username"} />
             <Textbox label={"Email"} name={"email"} />
