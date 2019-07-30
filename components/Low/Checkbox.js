@@ -7,9 +7,9 @@ import PropTypes from "prop-types";
 
 const useStyles = makeStyles(theme => ({
   root: {
-    color: '#2086C7',
+    color: "#2086C7",
     "&$checked": {
-      color: '#2086C7'
+      color: "#2086C7"
     }
   },
   color: {
@@ -19,7 +19,7 @@ const useStyles = makeStyles(theme => ({
 }));
 
 /**
- * 
+ *
  * @param {values} array Array para que genere los checkbox
  * @param {checkBoxState} func Funcion para que el componente padre recupere el state de los checkboxes
  */
@@ -44,28 +44,28 @@ function CheckBox(props) {
 
   function handleChangeAll() {
     /* crea un arrego vacío */
-	var obj = {};
+    var obj = {};
     /* guarda una copia de cada key del checkbox seteado con el valor booleano inverso */
     Object.keys(checkboxes).forEach(checkbox => {
       obj[checkbox] = !checkAll;
-	});
-	
+    });
+
     /* setea la nueva lista de checkboxess */
     setCheckboxes({ ...obj });
   }
 
   const areChecked = state => {
-    const stateToCheck = {...state};
+    const stateToCheck = { ...state };
     var allTrue = Object.keys(stateToCheck).every(function(k) {
       return stateToCheck[k];
     });
     return allTrue;
   };
 
-  	useEffect(() => {
-        props.checkBoxState(checkboxes);
-	}, [checkboxes]);
-	
+  useEffect(() => {
+    props.checkBoxState(checkboxes);
+  }, [checkboxes]);
+
   useEffect(() => {
     if (areChecked(checkboxes)) {
       setCheckAll(true);
@@ -89,7 +89,7 @@ function CheckBox(props) {
             }}
           />
         }
-        label="All"
+        label="Todo"
         classes={{ label: classes.color }}
       />
       {props.values.map((element, index) => (

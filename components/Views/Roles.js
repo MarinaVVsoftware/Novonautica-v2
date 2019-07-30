@@ -108,27 +108,44 @@ function Roles(props) {
         )}
 
         {/* RRHH */}
-        <Box
-          fontWeight="fontWeightRegular"
-          fontSize="h6.fontSize"
-          className={classes.CheckBoxMargin}>
-          RRHH
-        </Box>
-        <Checkbox
-          values={["Ver", "Modificar", "Crear", "Eliminar"]}
-          checkBoxState={checkBoxUser}
-        />
+        <div>
+          <Box
+            fontWeight="fontWeightRegular"
+            fontSize="h6.fontSize"
+            className={classes.CheckBoxMargin}>
+            RRHH
+          </Box>
+          <Checkbox
+            values={["Ver", "Modificar", "Crear", "Eliminar"]}
+            checkBoxState={checkBoxUser}
+          />
+        </div>
         {/* Roles */}
-        <Box
-          fontWeight="fontWeightRegular"
-          fontSize="h6.fontSize"
-          className={classes.CheckBoxMargin}>
-          Roles
-        </Box>
-        <Checkbox
-          values={["Ver", "Modificar", "Crear", "Eliminar"]}
-          checkBoxState={checkBoxRoles}
-        />
+        <div>
+          <Box
+            fontWeight="fontWeightRegular"
+            fontSize="h6.fontSize"
+            className={classes.CheckBoxMargin}>
+            Roles
+          </Box>
+          <Checkbox
+            values={["Ver", "Modificar", "Crear", "Eliminar"]}
+            checkBoxState={checkBoxRoles}
+          />
+        </div>
+        {/* Marina */}
+        <div>
+          <Box
+            fontWeight="fontWeightRegular"
+            fontSize="h6.fontSize"
+            className={classes.CheckBoxMargin}>
+            Marina Humeda
+          </Box>
+          <Checkbox
+            values={["Ver", "Modificar", "Crear", "Eliminar"]}
+            checkBoxState={checkBoxRoles}
+          />
+        </div>
       </Container>
     );
   };
