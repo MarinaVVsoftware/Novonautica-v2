@@ -101,6 +101,16 @@ function Users(props) {
   let structure = new StructureForm(params);
   const actionButton = [<Button label={"Aceptar"} type={"default"} />];
 
+  /* Parámetros para la tabla */
+  const columns = [
+    "rolId",
+    "statusId",
+    "email",
+    "username",
+    "recruitmentDate",
+    "creationDate"
+  ];
+
   /* Revisan los errores de los fetch GET */
   useEffect(() => {
     setError(status.error);
@@ -143,13 +153,20 @@ function Users(props) {
     };
   };
 
+  const defaults = {
+    username: "hola",
+    name: "pepe",
+    statusId: 2
+  };
+
   const RenderUsersForm = () => {
     return permissions.includes("CrearUsuario") ? (
       <Container>
         <Box
           fontWeight="fontWeightRegular"
           fontSize="h5.fontSize"
-          className={classes.Box}>
+          className={classes.Box}
+        >
           Crear Usuario
         </Box>
 
@@ -158,6 +175,7 @@ function Users(props) {
         ) : (
           <Form
             structure={structure}
+            defaults={defaults}
             modalTitle={"Crear Usuario"}
             modalDescription={"El usuario se ha creado exitosamente."}
             modalTitleError={"Crear Usuario: error"}
@@ -169,7 +187,8 @@ function Users(props) {
               <Save className={clsx(classes.leftIcon, classes.smallIcon)} />
             }
             modalActions={actionButton}
-            getResponse={saveUser}>
+            getResponse={saveUser}
+          >
             <Textbox label={"Nombre"} name={"name"} />
             <Textbox label={"Usuario"} name={"username"} />
             <Textbox label={"Email"} name={"email"} />
@@ -251,7 +270,8 @@ function Users(props) {
             }
             config={{
               rowsPerPage: users.response.users.length,
-              defaultSort: "desc"
+              defaultSort: "desc",
+              columns: columns
             }}
           />
         )}
@@ -276,8 +296,9 @@ function Users(props) {
         open={open}
         onClose={handleClickClose}
         maxWidth="sm"
-        title="Modificar Usuario">
-        {roles.loading ? (
+        title="Modificar Usuario"
+      >
+        {roles.loading || status.loading ? (
           <Loader />
         ) : (
           <Form
@@ -293,7 +314,8 @@ function Users(props) {
               <Save className={clsx(classes.leftIcon, classes.smallIcon)} />
             }
             modalActions={actionButton}
-            getResponse={saveUser}>
+            getResponse={saveUser}
+          >
             <Textbox label={"Nombre"} name={"name"} />
             <Textbox label={"Usuario"} name={"username"} />
             <Textbox label={"Email"} name={"email"} />

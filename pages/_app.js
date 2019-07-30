@@ -25,6 +25,7 @@ class MyApp extends App {
   }
 
   static async getInitialProps(config) {
+    const server = process.env.NOVOCORE_SERVER;
     // How getInitialProps works: https://medium.com/@griko/exploring-undocumented-getinitialprops-properties-on-next-js-1265a6abc652
     const { Component, ctx } = config;
     let pageProps = {};
@@ -71,7 +72,7 @@ class MyApp extends App {
     params.headers.authorization = cookies.token;
     process.env.NODE_TLS_REJECT_UNAUTHORIZED;
     const initialReq = await fetch(
-      `http://localhost:8080/api/users/${cookies.user}`,
+      `${server}/api/users/${cookies.user}`,
       params
     );
     data = await initialReq.json();
@@ -110,7 +111,8 @@ class MyApp extends App {
         <StylesProvider
           generateClassName={this.pageContext.generateClassName}
           sheetsRegistry={this.pageContext.sheetsRegistry}
-          sheetsManager={this.pageContext.sheetsManager}>
+          sheetsManager={this.pageContext.sheetsManager}
+        >
           {/* ThemeProvider makes the theme available down the React
               tree thanks to React context. */}
           <ThemeProvider theme={this.pageContext.theme}>

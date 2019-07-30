@@ -33,6 +33,7 @@ const useStyles = makeStyles(theme => ({
 }));
 
 function Login(props) {
+  const server = process.env.AUTHCORE_SERVER;
   const classes = useStyles();
   // flags y campos del login
   const [user, setUser] = useState("");
@@ -84,8 +85,11 @@ function Login(props) {
       params.email = user;
       params.password = password;
       config.body = JSON.stringify(params);
-      fetch("http://localhost:8079/api/auth/login/", config)
-        .then(response => response.json())
+      fetch(`${server}/api/auth/login/`, config)
+        .then(response => {
+          console.log(response);
+          return response.json();
+        })
         .then(data => {
           if (data.error === null) {
             if (typeof Storage !== "undefined") {
