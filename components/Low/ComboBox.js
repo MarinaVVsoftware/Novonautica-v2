@@ -43,6 +43,20 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
+/* Encuentra el valor "name" dentro de options */
+const findNameById = (id, options) => {
+  for (let i = 0; i < options.length; i++)
+    if (options[i].id == id) return options[i].name;
+};
+
+/* Dado que las API's requieren id's y no strings, dentro de "options" 
+  se trae el idy mediante esta función se busca el valor del id asociado 
+  al valor seleccionado en el select */
+const findId = (name, options) => {
+  for (let i = 0; i < options.length; i++)
+    if (options[i].name == name) return options[i].id;
+};
+
 /**
  * @param {array} options Array con todas las opciones. necesita recibir un objeto tipo {name, id}
  * para devolver correctamente el id del objeto
@@ -51,30 +65,35 @@ const useStyles = makeStyles(theme => ({
  * @param {func} handleValue Función para que el padre recupere el objecto actual
  * @param {bool} disabled Deshabilita el combobox
  * @param {bool} restart Resetea el combobox
+ * @param {string} default Valor por default al inicio del render
  */
 function Combobox(props) {
   const classes = useStyles();
   const [value, setValue] = useState(props.options[0].name);
+  const [defaultValue, cleanDefaultValue] = useState(
+    findNameById(props.default, props.options)
+  );
 
-  const handleChange = event => {
-    setValue(event.target.value);
-  };
-
+  /* detecta cuando el valor cambia y lo manda al form padre */
   useEffect(() => {
-    props.handleValue(props.name, findId(value));
+    props.handleValue(props.name, findId(value, props.options));
   }, [value]);
 
+  /* Escucha por el valor default y cambia el valor real */
   useEffect(() => {
-    setValue(props.options[0].name);
-    props.handleValue(props.name, findId(props.options[0].name));
+    if (defaultValue) setValue(defaultValue);
+  }, [defaultValue]);
+
+  /* Limpia el estado al primer valor cuando se limpie todo el form */
+  useEffect(() => {
+    if (!defaultValue) setValue(props.options[0].name);
+    props.handleValue(props.name, findId(props.options[0].name, props.options));
   }, [props.restart]);
 
-  /* Dado que las API's requieren id's y no strings, dentro de "options" 
-  se trae el idy mediante esta función se busca el valor del id asociado 
-  al valor seleccionado en el select */
-  const findId = name => {
-    for (let i = 0; i < props.options.length; i++)
-      if (props.options[i].name == name) return props.options[i].id;
+  const handleChange = event => {
+    /* limpia el default, para manejar solo el valor real */
+    if (defaultValue) cleanDefaultValue(null);
+    setValue(event.target.value);
   };
 
   return (

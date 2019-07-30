@@ -87,12 +87,20 @@ const useStyles = makeStyles(theme => ({
  * @param {int} rowsMax La cantidad máxima de rows del textboxArea.
  * @param {boolean} readOnly Convierte el textbox en "solo lectura".
  * @param {string} type Tipo del textfield
+ * @param {string} default Valor por default al inicio del render
+ *
  */
 function Textbox(props) {
   const classes = useStyles();
   const [value, setValue] = useState("");
+  const [defaultValue, cleanDefaultValue] = useState(props.default);
   const [valid, setValid] = useState(true);
   const [errorLabel, setErrorLabel] = useState(props.handleErrors(props.name));
+
+  /* Escucha por el valor default y cambia el valor real */
+  useEffect(() => {
+    if (defaultValue) setValue(defaultValue);
+  }, [defaultValue]);
 
   // escucha cada que el formulario hace submit
   useEffect(() => {
@@ -102,7 +110,8 @@ function Textbox(props) {
 
   // escucha cada que el diálogo se cierra, y limpia los estados
   useEffect(() => {
-    if (!props.dialog) {
+    if (!props.dialog && !defaultValue) {
+      // if (!props.dialog && !defaultValue) {
       setValue("");
       setValid(props.handleValid(props.name));
       setErrorLabel(props.handleErrors(props.name));
@@ -111,6 +120,8 @@ function Textbox(props) {
 
   /* Cada que el input cambie, lo setea */
   const HandleChange = e => {
+    /* limpia el default, para manejar solo el valor real */
+    if (defaultValue) cleanDefaultValue(null);
     setValue(e.target.value);
   };
 

@@ -153,6 +153,12 @@ function Users(props) {
     };
   };
 
+  const defaults = {
+    username: "hola",
+    name: "pepe",
+    statusId: 2
+  };
+
   const RenderUsersForm = () => {
     return permissions.includes("CrearUsuario") ? (
       <Container>
@@ -169,6 +175,7 @@ function Users(props) {
         ) : (
           <Form
             structure={structure}
+            defaults={defaults}
             modalTitle={"Crear Usuario"}
             modalDescription={"El usuario se ha creado exitosamente."}
             modalTitleError={"Crear Usuario: error"}
@@ -289,8 +296,9 @@ function Users(props) {
         open={open}
         onClose={handleClickClose}
         maxWidth="sm"
-        title="Modificar Usuario">
-        {roles.loading ? (
+        title="Modificar Usuario"
+      >
+        {roles.loading || status.loading ? (
           <Loader />
         ) : (
           <Form
@@ -306,7 +314,8 @@ function Users(props) {
               <Save className={clsx(classes.leftIcon, classes.smallIcon)} />
             }
             modalActions={actionButton}
-            getResponse={saveUser}>
+            getResponse={saveUser}
+          >
             <Textbox label={"Nombre"} name={"name"} />
             <Textbox label={"Usuario"} name={"username"} />
             <Textbox label={"Email"} name={"email"} />
