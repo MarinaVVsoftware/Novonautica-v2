@@ -9,7 +9,7 @@ function roles(props) {
     <DashBoard
       name={props.data.user.username}
       menu={JSON.parse(props.data.user.rol.permissions)}>
-      <Users />
+      <Roles />
     </DashBoard>
   );
 }
